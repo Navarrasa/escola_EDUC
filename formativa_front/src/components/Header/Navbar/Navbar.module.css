@@ -1,0 +1,27 @@
+.navbar{
+    display: flex;
+    width: 70%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbaritens{
+    display: flex;
+    align-items: center;
+}
+
+.navbaritens ul{
+    display: flex;
+    list-style: none;
+    padding: 20px;
+    gap: 30px;
+}
+
+.navbaritens ul li{
+    cursor: pointer;
+}
+
+.welcome{
+    width: 250px;
+    font-size: 20px;
+}
