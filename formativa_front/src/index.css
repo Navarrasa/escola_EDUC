@@ -9,7 +9,7 @@
 
 html body {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: #F7FAFC;
+  transition: background 0.5s, color 0.5s;
 }
-
