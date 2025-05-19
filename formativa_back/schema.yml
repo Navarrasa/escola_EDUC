@@ -2,8 +2,10 @@ openapi: 3.0.3
 info:
   title: Formativa API
   version: 1.0.0
-  description: algo
+  description: Documentação referente à API para gerenciamento do backend da Escola
+    EDUC
 paths:
+
   /app/disciplinas/:
     get:
       operationId: app_disciplinas_list
@@ -45,6 +47,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Disciplina'
           description: ''
+
   /app/disciplinas/{id}/:
     get:
       operationId: app_disciplinas_retrieve
@@ -141,12 +144,13 @@ paths:
       responses:
         '204':
           description: No response body
-  /app/disciplinas/professores/{NI}/:
+
+  /app/disciplinas/professores/{ni}/:
     get:
       operationId: app_disciplinas_professores_list
       parameters:
       - in: path
-        name: NI
+        name: ni
         schema:
           type: integer
         required: true
@@ -163,6 +167,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Disciplina'
           description: ''
+
   /app/reservas/:
     get:
       operationId: app_reservas_list
@@ -204,6 +209,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Reserva'
           description: ''
+
   /app/reservas/{id}/:
     get:
       operationId: app_reservas_retrieve
@@ -300,6 +306,7 @@ paths:
       responses:
         '204':
           description: No response body
+
   /app/reservas/professores:
     get:
       operationId: app_reservas_professores_list
@@ -357,6 +364,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Salas'
           description: ''
+
   /app/token/:
     post:
       operationId: app_token_create
@@ -384,6 +392,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenObtainPair'
           description: ''
+
   /app/token/refresh/:
     post:
       operationId: app_token_refresh_create
@@ -411,6 +420,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
+
   /app/usuarios/:
     get:
       operationId: app_usuarios_list
@@ -452,6 +462,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Usuario'
           description: ''
+
   /app/usuarios/{id}/:
     get:
       operationId: app_usuarios_retrieve
@@ -548,6 +559,7 @@ paths:
       responses:
         '204':
           description: No response body
+          
 components:
   schemas:
     Disciplina:
@@ -556,18 +568,25 @@ components:
         id:
           type: integer
           readOnly: true
+        professor:
+          type: integer
         nome:
           type: string
           maxLength: 100
+        curso:
+          type: string
+          maxLength: 100
+        descricao:
+          type: string
+          nullable: true
         carga_horaria:
           type: integer
           maximum: 4294967295
           minimum: 0
           format: int64
-        professor:
-          type: integer
       required:
       - carga_horaria
+      - curso
       - id
       - nome
       - professor
@@ -577,49 +596,92 @@ components:
         id:
           type: integer
           readOnly: true
+        professor:
+          type: integer
         nome:
           type: string
           maxLength: 100
+        curso:
+          type: string
+          maxLength: 100
+        descricao:
+          type: string
+          nullable: true
         carga_horaria:
           type: integer
           maximum: 4294967295
           minimum: 0
           format: int64
-        professor:
-          type: integer
     PatchedReserva:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-        sala:
-          type: integer
-        professor:
-          type: integer
         data_inicio:
           type: string
           format: date-time
         data_termino:
           type: string
           format: date-time
+        periodo:
+          allOf:
+          - $ref: '#/components/schemas/PeriodoEnum'
+          description: |-
+            Período da reserva
+
+            * `M` - Manhã
+            * `T` - Tarde
+            * `N` - Noite
+        sala_reservada:
+          type: integer
+        professor_responsavel:
+          type: integer
+        disciplina_associada:
+          type: integer
     PatchedUsuario:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
         username:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           pattern: ^[\w.@+-]+$
           maxLength: 150
-        email:
+        first_name:
           type: string
-          format: email
-          nullable: true
-          maxLength: 254
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
         tipo:
           allOf:
           - $ref: '#/components/schemas/TipoEnum'
@@ -628,32 +690,84 @@ components:
 
             * `G` - Gestor
             * `P` - Professor
-        password:
+        ni:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        email:
           type: string
-          writeOnly: true
-          maxLength: 128
+          format: email
+          nullable: true
+          maxLength: 254
+        telefone:
+          type: string
+          nullable: true
+          maxLength: 15
+        data_nascimento:
+          type: string
+          format: date
+          nullable: true
+        data_contratacao:
+          type: string
+          format: date
+          nullable: true
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+    PeriodoEnum:
+      enum:
+      - M
+      - T
+      - N
+      type: string
+      description: |-
+        * `M` - Manhã
+        * `T` - Tarde
+        * `N` - Noite
     Reserva:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
-        sala:
-          type: integer
-        professor:
-          type: integer
         data_inicio:
           type: string
           format: date-time
         data_termino:
           type: string
           format: date-time
+        periodo:
+          allOf:
+          - $ref: '#/components/schemas/PeriodoEnum'
+          description: |-
+            Período da reserva
+
+            * `M` - Manhã
+            * `T` - Tarde
+            * `N` - Noite
+        sala_reservada:
+          type: integer
+        professor_responsavel:
+          type: integer
+        disciplina_associada:
+          type: integer
       required:
       - data_inicio
       - data_termino
+      - disciplina_associada
       - id
-      - professor
-      - sala
+      - periodo
+      - professor_responsavel
+      - sala_reservada
     Salas:
       type: object
       properties:
@@ -663,7 +777,16 @@ components:
         nome:
           type: string
           maxLength: 100
+        capacidade:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        id_professor:
+          type: integer
+          nullable: true
       required:
+      - capacidade
       - id
       - nome
     TipoEnum:
@@ -712,17 +835,43 @@ components:
         id:
           type: integer
           readOnly: true
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
         username:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           pattern: ^[\w.@+-]+$
           maxLength: 150
-        email:
+        first_name:
           type: string
-          format: email
-          nullable: true
-          maxLength: 254
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
         tipo:
           allOf:
           - $ref: '#/components/schemas/TipoEnum'
@@ -731,13 +880,43 @@ components:
 
             * `G` - Gestor
             * `P` - Professor
-        password:
+        ni:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        email:
           type: string
-          writeOnly: true
-          maxLength: 128
+          format: email
+          nullable: true
+          maxLength: 254
+        telefone:
+          type: string
+          nullable: true
+          maxLength: 15
+        data_nascimento:
+          type: string
+          format: date
+          nullable: true
+        data_contratacao:
+          type: string
+          format: date
+          nullable: true
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
       required:
       - email
       - id
+      - ni
       - password
       - tipo
       - username

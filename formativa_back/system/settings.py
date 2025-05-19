@@ -54,7 +54,7 @@ AUTH_USER_MODEL = 'app.Usuario'
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Formativa API',
-    'DESCRIPTION': 'Documentação referente à API para gerenciamento do backend da Escola',
+    'DESCRIPTION': 'Documentação referente à API para gerenciamento do backend da Escola EDUC',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
