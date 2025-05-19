@@ -10,6 +10,26 @@
 html body {
   width: 100%;
   height: 100vh;
-  background-color: #F7FAFC;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   transition: background 0.5s, color 0.5s;
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1c1c1c;
+  --primary-color: #0059ff;
+}
+
+[data-theme='dark'] {
+  --bg-color: #1e1e1e;
+  --text-color: #f4f4f4;
+  --primary-color: #5294ff;
+}
+
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
