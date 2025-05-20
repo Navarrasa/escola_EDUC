@@ -21,13 +21,13 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 #### 1. Clonar o Repositório
 ```bash
 git clone https://github.com/Navarrasa/formativa-2dsmb.git
-cd escola-educ
+cd escola_EDUC
 ```
 
 #### 2. Configurar o Frontend (React + Vite)
 Navegue até o diretório do frontend:
 ```bash
-cd frontend
+cd formativa_frontend
 ```
 Instale as dependências:
 ```bash
@@ -46,7 +46,7 @@ O frontend estará disponível em `http://localhost:5173` (ou outra porta indica
 #### 3. Configurar o Backend (Django Rest Framework)
 Navegue até o diretório do backend:
 ```bash
-cd ../backend
+cd ../formativa_back
 ```
 Crie e ative um ambiente virtual (opcional, mas recomendado):
 ```bash
