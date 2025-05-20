@@ -1,6 +1,5 @@
 from django.urls import path
 from rest_framework_simplejwt.views import ( TokenObtainPairView, TokenRefreshView )
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from .views import (
 
     SalasListCreateAPIView,
@@ -18,11 +17,6 @@ from .views import (
 app_name = 'app'
 
 urlpatterns = [
-    # Spectacular Swagger
-    path('schema/',SpectacularAPIView.as_view(), name='schema'),
-    path('schema/swagger-ui/',SpectacularSwaggerView.as_view(url_name='app:schema'), name='swagger-ui'),
-    path('schema/redoc/', SpectacularRedocView.as_view(url_name='app:schema'), name='redoc'),
-    
     # Salas
     path('salas/', SalasListCreateAPIView.as_view(), name='salas-list-create'),
 
@@ -38,7 +32,7 @@ urlpatterns = [
     # Reservas
     path('reservas/', ReservaListCreateView.as_view(), name='reserva-list-create'),
     path('reservas/<int:pk>/', ReservaRetrieveDestroyAPIView.as_view(), name='reserva-destroy'),
-    path('reservas/professores', ReservaPorProfessorListView.as_view(), name='reserva-list-professor'),
+    path('reservas/professores/', ReservaPorProfessorListView.as_view(), name='reserva-list-professor'),
     
     # JWT
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

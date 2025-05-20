@@ -34,14 +34,14 @@ class SalasSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DisciplinaSerializer(serializers.ModelSerializer):
-    professor = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(tipo='P'))
+    professor = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(tipo='G'))
 
     class Meta:
         model = Disciplina
         fields = '__all__'
     def validate_professor(self, value):
-        if value.tipo != 'professor':
-            raise serializers.ValidationError("O usuário deve ser um professor.")
+        if value.tipo != 'G':
+            raise serializers.ValidationError("O usuário deve ser um Gestor!.")
         return value
 
 class ReservaSerializer(serializers.ModelSerializer):

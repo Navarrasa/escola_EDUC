@@ -40,25 +40,18 @@ INSTALLED_APPS = [
     'rest_framework',
     'app',
     'rest_framework_simplejwt',
-    'drf_spectacular',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 AUTH_USER_MODEL = 'app.Usuario'
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Formativa API',
-    'DESCRIPTION': 'Documentação referente à API para gerenciamento do backend da Escola EDUC',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-}
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
