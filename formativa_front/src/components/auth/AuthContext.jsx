@@ -11,32 +11,35 @@ export const AuthProvider = ({ children }) => {
   });
   const [user, setUser] = useState(null);
 
-  const loginUser = async (username, password) => {
-    try {
-      const response = await axios.post('http://localhost:8000/api/token/', {
-        username,
-        password,
-      });
-      setAuthTokens(response.data);
-      localStorage.setItem('authTokens', JSON.stringify(response.data));
-      fetchUser(response.data.access);
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
-  };
+const loginUser = async (username, password) => {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/app/token/', {
+      username: username,
+      password: password
+    });
 
-  const fetchUser = async (accessToken) => {
-    try {
-      const response = await axios.get('http://localhost:8000/api/user/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      setUser(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar usuário:', error);
-    }
-  };
+    const { access, refresh } = response.data;
+    localStorage.setItem('access_token', access);
+    localStorage.setItem('refresh_token', refresh);
+
+    await fetchUser(access);
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+  }
+};
+
+  const fetchUser = async (token) => {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/app/usuarios/', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setUser(response.data);
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error);
+  }
+};
 
   const logoutUser = () => {
     setAuthTokens(null);
