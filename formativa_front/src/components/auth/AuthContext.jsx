@@ -21,7 +21,8 @@ const loginUser = async (username, password) => {
     const { access, refresh } = response.data;
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
-
+    setAuthTokens({ access, refresh });
+    localStorage.setItem('authTokens', JSON.stringify({ access, refresh }));
     await fetchUser(access);
   } catch (error) {
     console.error('Erro ao fazer login:', error);
@@ -56,7 +57,7 @@ const loginUser = async (username, password) => {
   return (
     <AuthContext.Provider
       value={{
-        user,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              name,
         authTokens,
         loginUser,
         logoutUser,

@@ -8,15 +8,15 @@ import { AuthContext } from '../../../components/auth/AuthContext';
 export function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { loginUser } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { loginUser, authTokens } = useContext(AuthContext);
 
   useEffect(() => {
     const previousTheme = document.documentElement.getAttribute('data-theme');
     document.documentElement.setAttribute('data-theme', 'light');
 
-    // Ao desmontar, restaura o tema anterior
     return () => {
       if (previousTheme) {
         document.documentElement.setAttribute('data-theme', previousTheme);
@@ -24,24 +24,28 @@ export function Login() {
     };
   }, []);
 
-  // Verifica se o usuário já está logado
   useEffect(() => {
-    const authTokens = localStorage.getItem('authTokens');
     if (authTokens) {
-      navigate('/home');
+      navigate('/');
     }
-  }, [navigate]);
+  }, [authTokens, navigate]);
 
-  // Função para lidar com o envio do formulário de login
   const handleLogin = async (e) => {
-  e.preventDefault();
-  await loginUser(email, password);
+    e.preventDefault();
+    setIsLoading(true);
+
+    const success = await loginUser(username, password);
+    setIsLoading(false);
+
+    if (success) {
+      navigate('/perfil');
   };
+}
 
   return (
     <div className={styles.login}>
       <div className={styles.arrowleft}>
-        <img src={arrowleft} alt="Left Arrow" onClick={() => navigate('/')}/>
+        <img src={arrowleft} alt="Voltar" onClick={() => navigate('/')} />
       </div>
       <div className={styles.loginContainer}>
         <div className={styles.loginContent}>
@@ -49,28 +53,32 @@ export function Login() {
             <img src={logo} alt="Logo da Escola" />
           </div>
           <div>
-            <h1>Bem vindo! Faça o seu login</h1>
+            <h1>Bem-vindo! Faça o seu login</h1>
           </div>
           <form className={styles.FormGroup} onSubmit={handleLogin}>
             <input
               type="text"
-              id="email"
-              name="email"
+              id="username"
+              name="username"
+              autoComplete="username"
               required
-              placeholder="email..."
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome..."
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <input
               type="password"
               id="password"
               name="password"
+              autoComplete="current-password"
               required
               placeholder="senha..."
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="submit">Entrar</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Entrando...' : 'Entrar'}
+            </button>
           </form>
         </div>
       </div>

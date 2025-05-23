@@ -51,8 +51,11 @@ export function Header() {
                     <div>
                         <nav className={styles.navbaritens}>
                         <h2 className={styles.welcome}>
-                            Bem vindo, {user ? user.username : 'Professor'}.
-                            O que deseja fazer?
+                        {!authTokens
+                            ? 'Bem-vindo(a)! O que deseja fazer?'
+                            : !user
+                            ? 'Carregando usuário...'
+                            : `Bem-vindo(a), ${user.username}. O que deseja fazer?`}
                         </h2>
                         <ul>
                             {/* Menu de usuário */}

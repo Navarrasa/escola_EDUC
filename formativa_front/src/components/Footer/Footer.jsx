@@ -13,9 +13,9 @@ export function Footer() {
 
         <div className={styles.section}>
           <h4>Contato</h4>
-          <p>Email: contato@escolaeduc.com.br</p>
-          <p>Telefone: (11) 1234-5678</p>
-          <p>Endereço: Rua da Aprendizagem, 123 - São Paulo, SP</p>
+          <p><span>📧</span> Email: contato@escolaeduc.com.br</p>
+          <p><span>📞</span> Telefone: (11) 1234-5678</p>
+          <p><span>📍</span> Endereço: Rua da Aprendizagem, 123 - São Paulo, SP</p>
         </div>
 
         <div className={styles.section}>

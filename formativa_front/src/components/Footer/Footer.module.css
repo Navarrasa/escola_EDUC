@@ -1,46 +1,49 @@
-/* src/components/Footer/Footer.module.css */
-
 .footer {
   background-color: var(--bg-color);
   color: var(--text-color);
   border-top: 1px solid var(--primary-color);
-  padding: 2rem 1rem 1rem;
-  font-size: 0.9rem;
+  padding: 3rem 1rem 2rem;
+  font-size: 0.95rem;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
 }
 
 .section {
-  flex: 1 1 200px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: right;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
 }
 
 .section h3,
 .section h4 {
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
   color: var(--primary-color);
 }
 
+.section p,
+.section li {
+  line-height: 1.6;
+}
+
 .section ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.section ul li {
-  margin: 0.3rem 0;
 }
 
 .section ul li a {
@@ -58,5 +61,5 @@
   margin-top: 2rem;
   border-top: 1px solid var(--primary-color);
   padding-top: 1rem;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }

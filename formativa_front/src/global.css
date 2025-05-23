@@ -19,13 +19,16 @@ html body {
   --bg-color: #ffffff;
   --text-color: #1c1c1c;
   --primary-color: #0059ff;
+  --card-bg-color: #f0f0f0;
 }
 
 [data-theme='dark'] {
   --bg-color: #1e1e1e;
   --text-color: #f4f4f4;
   --primary-color: #5294ff;
+  --card-bg-color: #2c2c2c;
 }
+
 
 
 #root {
