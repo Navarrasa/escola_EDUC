@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework_simplejwt.views import ( TokenObtainPairView, TokenRefreshView )
 from .views import (
 
     SalasListCreateAPIView,
@@ -10,7 +9,8 @@ from .views import (
     DisciplinaPorProfessorListView,
     ReservaListCreateView,
     ReservaRetrieveDestroyAPIView,
-    ReservaPorProfessorListView
+    ReservaPorProfessorListView,
+    LoginView
 
 )
 
@@ -35,6 +35,5 @@ urlpatterns = [
     path('reservas/professores/', ReservaPorProfessorListView.as_view(), name='reserva-list-professor'),
     
     # JWT
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/', LoginView.as_view(), name='token_obtain_pair'),
 ]

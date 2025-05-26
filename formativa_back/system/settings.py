@@ -105,7 +105,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cadastro',
         'USER': 'root',
-        'PASSWORD': 'senai',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '3306'
     }

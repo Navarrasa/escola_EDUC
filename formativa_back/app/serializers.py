@@ -1,6 +1,28 @@
 from rest_framework import serializers
 from .models import Usuario, Disciplina, Salas, Reserva
 from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class LoginSerializer(TokenObtainPairSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        print(data)
+        data['user'] ={
+            'id': self.user.id,
+            'username': self.user.username,
+            'email': self.user.email,
+            'tipo': self.user.tipo,
+            'telefone': self.user.telefone,
+            'ni': self.user.ni,
+            'data_nascimento': self.user.data_nascimento,
+            'data_contratacao': self.user.data_contratacao,
+        }
+            
+        return data
+
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:

@@ -13,14 +13,15 @@ export const AuthProvider = ({ children }) => {
 
 const loginUser = async (username, password) => {
   try {
-    const response = await axios.post('http://127.0.0.1:8000/app/token/', {
+    const response = await axios.post('http://127.0.0.1:8000/app/auth/', {
       username: username,
       password: password
     });
 
-    const { access, refresh } = response.data;
+    const { access, refresh, user } = response.data;
     localStorage.setItem('access_token', access);
     localStorage.setItem('refresh_token', refresh);
+    localStorage.setItem('user', JSON.stringify(user));
     setAuthTokens({ access, refresh });
     localStorage.setItem('authTokens', JSON.stringify({ access, refresh }));
     await fetchUser(access);

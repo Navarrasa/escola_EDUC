@@ -1,8 +1,13 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .models import (Usuario, Disciplina, Salas, Reserva)
-from .serializers import (UsuarioSerializer, DisciplinaSerializer, SalasSerializer, ReservaSerializer)
+from .serializers import (UsuarioSerializer, DisciplinaSerializer, SalasSerializer, ReservaSerializer, LoginSerializer)
 from .permissions import (IsGestor, IsProfessor, IsDonoOuGestor)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class LoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
+
 
 # GET e POST do usuário permitido somente para o Gestor
 class UsuarioListCreateView(ListCreateAPIView):

@@ -41,6 +41,16 @@ export function Header() {
         setShowUserMenu(false);
     }
 
+    console.log(!authTokens
+                            ? 'Bem-vindo(a)! O que deseja fazer?'
+                            : !user
+                            ? 'Carregando usuário...'
+                            : `Bem-vindo(a), ${user.username}. O que deseja fazer?`
+                        )
+
+    console.log(localStorage)
+
+
     return(
         <>
             <header className={styles.header}>
