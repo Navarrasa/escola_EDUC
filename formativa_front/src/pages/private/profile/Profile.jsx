@@ -11,31 +11,31 @@ export function Profile() {
       {user ? (
         <div className={styles.userInfo}>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Usuário:</span> {user[0]?.username}
+            <span className={styles.label}>Usuário:</span> {user?.username}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Primeiro Nome:</span> {user[0]?.first_name}
+            <span className={styles.label}>Primeiro Nome:</span> {user?.first_name}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Último Nome:</span> {user[0]?.last_name}
+            <span className={styles.label}>Último Nome:</span> {user?.last_name}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Telefone:</span> {user[0]?.telefone}
+            <span className={styles.label}>Telefone:</span> {user?.telefone}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Email:</span> {user[0]?.email}
+            <span className={styles.label}>Email:</span> {user?.email}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Cargo:</span> {user[0]?.tipo}
+            <span className={styles.label}>Cargo:</span> {user?.tipo}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>NI:</span> {user[0]?.ni}
+            <span className={styles.label}>NI:</span> {user?.ni}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Data de Nascimento:</span> {user[0]?.data_nascimento}
+            <span className={styles.label}>Data de Nascimento:</span> {user?.data_nascimento}
           </p>
           <p className={styles.infoItem}>
-            <span className={styles.label}>Data de Contratação:</span> {user[0]?.data_contratacao}
+            <span className={styles.label}>Data de Contratação:</span> {user?.data_contratacao}
           </p>
         </div>
       ) : (

@@ -59,7 +59,6 @@ export function Header() {
             }
         setShowUserMenu(false);
     }
-
     return(
         <>
             <header className={styles.header}>
@@ -70,11 +69,9 @@ export function Header() {
                     <div>
                         <nav className={styles.navbaritens}>
                         <h2 className={styles.welcome}>
-                        {!authTokens
-                            ? 'Bem-vindo(a)! O que deseja fazer?'
-                            : !user[0]?.first_name
-                            ? 'Carregando usuário...'
-                            : `Bem-vindo(a), ${user[0]?.first_name}. O que deseja fazer?`}
+                            {!authTokens
+                                ? 'Bem-vindo(a)! O que deseja fazer?'
+                                : `Bem-vindo(a), ${user?.first_name || 'Usuário'}. O que deseja fazer?`}
                         </h2>
                         <ul>
                             {/* Menu de usuário */}
@@ -89,7 +86,7 @@ export function Header() {
                                     <div onClick={() => handleUserOptionClick('Reservas')}>Reservas</div>
                                     <div onClick={() => handleUserOptionClick('Disciplinas')}>Disciplinas</div>
                                     <div onClick={() => handleUserOptionClick('Sala de Aula')}>Sala de Aula</div>
-                                    {user[0]?.tipo === 'G' && (
+                                    {user?.tipo === 'G' && (
                                         <div onClick={() => handleUserOptionClick('Cadastro Professor')}>Cadastro Professor</div>
                                     )}
                                     <div onClick={() => handleUserOptionClick('Sair')}>Sair</div>
