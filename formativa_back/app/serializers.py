@@ -11,10 +11,11 @@ class LoginSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         print(data)
         data['user'] ={
-            'id': self.user.id,
             'username': self.user.username,
             'email': self.user.email,
             'tipo': self.user.tipo,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
             'telefone': self.user.telefone,
             'ni': self.user.ni,
             'data_nascimento': self.user.data_nascimento,

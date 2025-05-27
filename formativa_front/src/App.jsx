@@ -10,6 +10,10 @@ import { Login } from './pages/public/login/Login';
 import { Profile } from './pages/private/profile/Profile';
 import { Process } from './pages/public/process/Process';
 import { School } from './pages/public/school/School';
+import { Classroom } from './pages/private/classroom/Classroom';
+import { Discipline } from './pages/private/discipline/Discipline';
+import { Reservation } from './pages/private/reservation/Reservation';
+import { TeacherRegistration } from './pages/private/teacherRegistration/TeacherRegistration';
 
 function App() {
   const { authTokens } = useContext(AuthContext);
@@ -38,7 +42,27 @@ function App() {
               }
             />
           </Route>
-
+          <Route path="/disciplinas" element={
+                <ProtectedRoute>
+                  <Discipline />
+                </ProtectedRoute>
+            } />
+          <Route path="/reservas" element={
+                <ProtectedRoute>
+                  <Reservation />
+                </ProtectedRoute>
+            } />
+          <Route path="/sala-de-aula" element={
+                <ProtectedRoute>
+                  <Classroom />
+                </ProtectedRoute>
+            } />
+          <Route path="/cadastro-professor" element={
+                <ProtectedRoute>
+                  <TeacherRegistration />
+                </ProtectedRoute>
+            } />
+          
           {/* Rota sem layout (ex: login) */}
           <Route path="/login" element={<Login />} />
 

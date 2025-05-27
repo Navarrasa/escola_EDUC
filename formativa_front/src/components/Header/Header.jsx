@@ -16,7 +16,7 @@ export function Header() {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showThemeMenu, setShowThemeMenu] = useState(false);
     const navigate = useNavigate();
-
+    // console.log(user[0]?.username);
     const { theme, changeTheme } = useTheme(); 
     const isDark = theme == 'dark';
 
@@ -34,22 +34,31 @@ export function Header() {
         if (option === 'Sair') {
         logoutUser();
         navigate('/login');
-        } else {
+        } else if (option === 'Meu Perfil') {
+        // Redireciona para a página de perfil do usuário
+        navigate('/perfil');
+        }
+        else if (option === 'Reservas') {
+        // Redireciona para a página de reservas
+        navigate('/reservas');
+        } else if (option === 'Disciplinas') {
+        // Redireciona para a página de disciplinas
+        navigate('/disciplinas');
+        }
+        else if (option === 'Sala de Aula') {
+        // Redireciona para a página de sala de aula
+        navigate('/sala-de-aula');
+        }
+        else if (option === 'Cadastro Professor') {
+        // Redireciona para a página de cadastro de professor
+        navigate('/cadastro-professor');
+        }
+        else {
         // Redireciona para as páginas relacionadas ao usuário
         console.log('Redirecionando para a página:', option);
             }
         setShowUserMenu(false);
     }
-
-    console.log(!authTokens
-                            ? 'Bem-vindo(a)! O que deseja fazer?'
-                            : !user
-                            ? 'Carregando usuário...'
-                            : `Bem-vindo(a), ${user.username}. O que deseja fazer?`
-                        )
-
-    console.log(localStorage)
-
 
     return(
         <>
@@ -63,9 +72,9 @@ export function Header() {
                         <h2 className={styles.welcome}>
                         {!authTokens
                             ? 'Bem-vindo(a)! O que deseja fazer?'
-                            : !user
+                            : !user[0]?.first_name
                             ? 'Carregando usuário...'
-                            : `Bem-vindo(a), ${user.username}. O que deseja fazer?`}
+                            : `Bem-vindo(a), ${user[0]?.first_name}. O que deseja fazer?`}
                         </h2>
                         <ul>
                             {/* Menu de usuário */}
@@ -80,7 +89,7 @@ export function Header() {
                                     <div onClick={() => handleUserOptionClick('Reservas')}>Reservas</div>
                                     <div onClick={() => handleUserOptionClick('Disciplinas')}>Disciplinas</div>
                                     <div onClick={() => handleUserOptionClick('Sala de Aula')}>Sala de Aula</div>
-                                    {user?.isGestor && (
+                                    {user[0]?.tipo === 'G' && (
                                         <div onClick={() => handleUserOptionClick('Cadastro Professor')}>Cadastro Professor</div>
                                     )}
                                     <div onClick={() => handleUserOptionClick('Sair')}>Sair</div>
