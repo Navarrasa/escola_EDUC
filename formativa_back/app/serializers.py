@@ -31,7 +31,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'password': {'write_only': True},
-            'email': {'required': True},
             'tipo': {'required': True},
         }
 

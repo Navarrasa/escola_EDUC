@@ -4,19 +4,24 @@ import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
+const getStoredItem = (key) => {
+    try {
+        const item = localStorage.getItem(key);
+        return item && item !== 'undefined' ? JSON.parse(item) : null;
+    } catch (e) {
+        console.error(`Erro ao fazer parse de ${key}:`, e);
+        return null;
+    }
+};
+
 export const AuthProvider = ({ children }) => {
-    const [authTokens, setAuthTokens] = useState(() =>
-        localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null
-    );
-    const [user, setUser] = useState(() =>
-        localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
-    );
+    const [authTokens, setAuthTokens] = useState(() => getStoredItem('authTokens'));
+    const [user, setUser] = useState(() => getStoredItem('user'));
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const initializeAuth = async () => {
             const storedTokens = localStorage.getItem('authTokens');
-            // console.log(storedTokens);
             if (storedTokens) {
                 const parsedTokens = JSON.parse(storedTokens);
                 setAuthTokens(parsedTokens);  
@@ -68,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
     // console.log(user);
+    // console.log(authTokens);
     return (
         <AuthContext.Provider
             value={{

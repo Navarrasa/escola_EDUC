@@ -3,7 +3,7 @@ import logo from '../../../assets/icons/logo.png';
 import arrowleft from '../../../assets/icons/arrowleft-dark.png';
 import React, { useEffect, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../../components/auth/AuthContext';
+import { AuthContext } from '../../../hooks/AuthContext';
 
 export function Login() {
   const navigate = useNavigate();

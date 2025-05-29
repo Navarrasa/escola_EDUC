@@ -1,9 +1,9 @@
 import styles from './Profile.module.css';
 import React, { useContext } from 'react';
-import { AuthContext } from '../../../components/auth/AuthContext';
+import { AuthContext } from '../../../hooks/AuthContext';
 
 export function Profile() {
-  const { user, logoutUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <div className={styles.profileContainer}>

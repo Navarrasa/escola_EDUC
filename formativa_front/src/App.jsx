@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './components/auth/AuthContext';
-import AuthContext from './components/auth/AuthContext';
+import { AuthProvider } from './hooks/AuthContext';
+import AuthContext from './hooks/AuthContext';
 
 import { DefaultLayout } from './pages/DefaultLayout';
 
@@ -41,28 +41,27 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/disciplinas" element={
+              <ProtectedRoute>
+                    <Discipline />
+                  </ProtectedRoute>
+              } />
+            <Route path="/reservas" element={
+              <ProtectedRoute>
+                    <Reservation />
+                  </ProtectedRoute>
+              } />
+            <Route path="/sala-de-aula" element={
+              <ProtectedRoute>
+                    <Classroom />
+                  </ProtectedRoute>
+              } />
+            <Route path="/cadastro-professor" element={
+              <ProtectedRoute>
+                    <TeacherRegistration />
+                  </ProtectedRoute>
+              } />
           </Route>
-          <Route path="/disciplinas" element={
-                <ProtectedRoute>
-                  <Discipline />
-                </ProtectedRoute>
-            } />
-          <Route path="/reservas" element={
-                <ProtectedRoute>
-                  <Reservation />
-                </ProtectedRoute>
-            } />
-          <Route path="/sala-de-aula" element={
-                <ProtectedRoute>
-                  <Classroom />
-                </ProtectedRoute>
-            } />
-          <Route path="/cadastro-professor" element={
-                <ProtectedRoute>
-                  <TeacherRegistration />
-                </ProtectedRoute>
-            } />
-          
           {/* Rota sem layout (ex: login) */}
           <Route path="/login" element={<Login />} />
 

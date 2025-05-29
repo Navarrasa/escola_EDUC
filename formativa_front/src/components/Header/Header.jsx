@@ -1,7 +1,7 @@
 import styles from './Header.module.css';
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../auth/AuthContext';
+import { AuthContext } from '../../hooks/AuthContext';
 import { useTheme } from '../../hooks/useTheme';
 
 import logo from '../../assets/icons/logo.png';
@@ -71,7 +71,7 @@ export function Header() {
                         <h2 className={styles.welcome}>
                             {!authTokens
                                 ? 'Bem-vindo(a)! O que deseja fazer?'
-                                : `Bem-vindo(a), ${user?.first_name || 'Usuário'}. O que deseja fazer?`}
+                                : `Bem-vindo(a), ${user?.username || 'Usuário'}. O que deseja fazer?`}
                         </h2>
                         <ul>
                             {/* Menu de usuário */}

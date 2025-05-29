@@ -13,7 +13,10 @@ class LoginView(TokenObtainPairView):
 class UsuarioListCreateView(ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [IsGestor]
+    
+    def get_permissions(self):
+        if self.request.method:
+            return [IsGestor]
 
 
 # GET, PUT, PATCH e DELETE que é permitido somente para o gestor
@@ -21,8 +24,11 @@ class UsuarioListCreateView(ListCreateAPIView):
 class UsuarioRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [IsGestor]
     lookup_field = 'pk' # por qual campo procura
+
+    def get_permissions(self):
+        if self.request.method:
+            return [IsGestor]
 
 
 # ver todas as displinas e criar uma nova disciplina (apenas o gestor pode fazer)
@@ -33,8 +39,8 @@ class DisciplinaListCreateView(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated()]
-        return [IsGestor()]
+            return [IsProfessor]
+        return [IsGestor]
 
 
 class SalasListCreateAPIView(ListCreateAPIView):
@@ -43,9 +49,8 @@ class SalasListCreateAPIView(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated()]
-        return [IsGestor()]
-
+            return [IsProfessor]
+        return [IsGestor]
 
 class SalasRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = Salas.objects.all()
@@ -80,7 +85,7 @@ class ReservaListCreateView(ListCreateAPIView):
     # se for método get qualquer usuário pode visualizar, se for outro método só o gestor pode realizar a ação
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated()]
+            return [IsAuthenticated]
         return [IsGestor()]
     
 
