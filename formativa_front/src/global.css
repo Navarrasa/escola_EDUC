@@ -18,21 +18,23 @@ html body {
 :root {
   --bg-color: #ffffff;
   --text-color: #1c1c1c;
+  --button-text-color: #ffffff;
   --primary-color: #0059ff;
-  --card-bg-color: #f0f0f0;
+  --card-bg-color: #8da3e4;
   --button-hover: #0033cc; 
   --border-color: #ddd;
-  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 [data-theme='dark'] {
   --bg-color: #1e1e1e;
   --text-color: #f4f4f4;
   --primary-color: #5294ff;
+  --button-text-color: #ffffff;
   --card-bg-color: #2c2c2c;
   --button-hover: #2f6bff; 
   --border-color: #444;
-  --shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
 }
 
 

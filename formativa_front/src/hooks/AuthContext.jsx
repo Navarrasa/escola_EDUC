@@ -4,63 +4,75 @@ import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 
-const getStoredItem = (key) => {
-    try {
-        const item = localStorage.getItem(key);
-        return item && item !== 'undefined' ? JSON.parse(item) : null;
-    } catch (e) {
-        console.error(`Erro ao fazer parse de ${key}:`, e);
-        return null;
-    }
-};
-
 export const AuthProvider = ({ children }) => {
-    const [authTokens, setAuthTokens] = useState(() => getStoredItem('authTokens'));
-    const [user, setUser] = useState(() => getStoredItem('user'));
+    
+    const [authTokens, setAuthTokens] = useState(() => {
+    const tokens = localStorage.getItem('authTokens');
+    return tokens ? JSON.parse(tokens) : null;
+    });
+    const [user, setUser] = useState(() => {
+    const userData = localStorage.getItem('user');
+    return userData ? JSON.parse(userData) : null;
+    });
+
     const [isLoading, setIsLoading] = useState(true);
 
+    // console.log(authTokens);
+    // console.log(user);
+
     useEffect(() => {
-        const initializeAuth = async () => {
-            const storedTokens = localStorage.getItem('authTokens');
-            if (storedTokens) {
-                const parsedTokens = JSON.parse(storedTokens);
-                setAuthTokens(parsedTokens);  
-                if (!parsedTokens.access || isTokenValid(!parsedTokens.access)) {
-                    logoutUser();
-                }
-            } else {
-                setIsLoading(false);
-            }
-        };
-        initializeAuth();
-    }, []);
+    const initializeAuth = async () => {
+      try {
+        // Se não houver tokens, define isLoading como false e retorna
+        if (!authTokens) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Verifica se o token de acesso é válido
+        if (!authTokens.access || !isTokenValid(authTokens.access)) {
+          logoutUser();
+        } else {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Erro ao inicializar autenticação:', error);
+        logoutUser();
+      }
+    };
+
+    initializeAuth();
+  }, []); // Dependência vazia, executa apenas na montagem
 
     const loginUser = async (username, password) => {
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/app/auth/', {
-                username,
-                password,
-            });
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/app/auth/', {
+      username,
+      password,
+    });
 
-            const { access, refresh, user } = response.data;
-            localStorage.setItem('authTokens', JSON.stringify({ access, refresh }));
-            localStorage.setItem('user', JSON.stringify(user));
-            setAuthTokens({ access, refresh });
-            setUser(user);
-            setIsLoading(false);
-        } catch (error) {
-            console.error('Erro ao fazer login:', error);
-            throw error;
-        }
-    };
+    const { access, refresh, user: userData } = response.data;
+    // Garante que userData seja um objeto
+    const userObj = typeof userData === 'string' ? JSON.parse(userData) : userData;
+    localStorage.setItem('authTokens', JSON.stringify({ access, refresh }));
+    localStorage.setItem('user', JSON.stringify(userObj));
+    setAuthTokens({ access, refresh });
+    setUser(userObj);
+    setIsLoading(false);
+
+    // Depuração: verifique o valor de user após login
+    // console.log('user após login:', userObj);
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    throw error;
+  }
+};
 
     const logoutUser = () => {
         setAuthTokens(null);
         setUser(null);
         localStorage.removeItem('authTokens');
         localStorage.removeItem('user');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
         setIsLoading(false);
     };
 
@@ -73,7 +85,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
     // console.log(user);
-    // console.log(authTokens);
     return (
         <AuthContext.Provider
             value={{

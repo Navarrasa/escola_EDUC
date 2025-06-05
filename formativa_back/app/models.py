@@ -6,11 +6,11 @@ from django.core.exceptions import ValidationError
 
 class Usuario(AbstractUser):
     TIPO_USUARIO = [
-        ('G', 'Gestor'),
-        ('P', 'Professor')
+        ('Gestor', 'Gestor'),
+        ('Professor', 'Professor')
     ]
 
-    tipo = models.CharField(max_length=1, choices=TIPO_USUARIO, help_text="Tipo de usuário", null=False, blank=False, default='P')
+    tipo = models.CharField(max_length=10, choices=TIPO_USUARIO, help_text="Tipo de usuário", null=False, blank=False, default='Professor')
     ni = models.PositiveIntegerField()
     email = models.EmailField(null=True, blank=True)
     telefone = models.CharField(max_length=15, blank=True, null=True)
@@ -29,7 +29,7 @@ class Disciplina(models.Model):
     curso = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
     carga_horaria = models.PositiveIntegerField()
-    professor = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name='disciplinas', null=True, blank=True, limit_choices_to={'tipo':'P'})
+    professor = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name='disciplinas', null=True, blank=True, limit_choices_to={'tipo':'Professor'})
 
     def __str__(self):
         return f"{self.nome}"
@@ -38,7 +38,7 @@ class Disciplina(models.Model):
 class Salas(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
     capacidade = models.PositiveIntegerField()
-    id_professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='salas',null=True,blank=True, limit_choices_to={'tipo':'P'})
+    id_professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='salas',null=True,blank=True, limit_choices_to={'tipo':'Professor'})
     
     def save(self, *args, **kwargs):
         if self.pk is None: 
@@ -66,7 +66,7 @@ class Reserva(models.Model):
     data_termino = models.DateTimeField()
     periodo = models.CharField(max_length=1, choices=PERIODO_CHOICES, help_text="Período da reserva")
     sala_reservada = models.ForeignKey(Salas, on_delete=models.CASCADE, related_name='reservas')
-    professor_responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='reservas', limit_choices_to={'tipo':'P'})
+    professor_responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='reservas', limit_choices_to={'tipo':'Professor'})
     disciplina_associada = models.ForeignKey(Disciplina, on_delete=models.CASCADE, related_name='reservas')
 
     def save(self, *args, **kwargs):

@@ -13,10 +13,7 @@ class LoginView(TokenObtainPairView):
 class UsuarioListCreateView(ListCreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    
-    def get_permissions(self):
-        if self.request.method:
-            return [IsGestor]
+    permission_classes = [IsGestor]
 
 
 # GET, PUT, PATCH e DELETE que é permitido somente para o gestor
@@ -24,23 +21,15 @@ class UsuarioListCreateView(ListCreateAPIView):
 class UsuarioRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [IsGestor]
     lookup_field = 'pk' # por qual campo procura
-
-    def get_permissions(self):
-        if self.request.method:
-            return [IsGestor]
 
 
 # ver todas as displinas e criar uma nova disciplina (apenas o gestor pode fazer)
 class DisciplinaListCreateView(ListCreateAPIView):
     queryset = Disciplina.objects.all()
     serializer_class = DisciplinaSerializer
-    lookup_field = 'pk'
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsProfessor]
-        return [IsGestor]
+    permission_classes = [IsDonoOuGestor]
 
 
 class SalasListCreateAPIView(ListCreateAPIView):
@@ -72,6 +61,7 @@ class DisciplinaRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 class DisciplinaPorProfessorListView(ListAPIView):
     serializer_class = DisciplinaSerializer
     permission_classes = [IsProfessor]
+    lookup_field = 'ni'
 
     def get_queryset(self):
         return Disciplina.objects.filter(professor=self.request.user) # filtra todas as disciplinas do usuário logado (professor no caso)
@@ -86,13 +76,13 @@ class ReservaListCreateView(ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsAuthenticated]
-        return [IsGestor()]
+        return [IsGestor]
     
 
     # permite fazer uma consulta para ver as reservas de um professor específico pelo ID
     def get_queryset(self):
         queryset = super().get_queryset()
-        professor_id = self.request.query_params.get('P', None)
+        professor_id = self.request.query_params.get('Professor', None)
         if professor_id: 
             queryset = queryset.filter(professor_id=professor_id)
         return queryset

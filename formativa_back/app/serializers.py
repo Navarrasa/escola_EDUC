@@ -35,9 +35,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
         }
 
     def validate_tipo(self, value):
-        valid_types = ['P', 'G']  
+        valid_types = ['Professor', 'Gestor']  
         if value not in valid_types:
-            raise serializers.ValidationError("Tipo inválido. Use  'P' (professor) ou 'G' (gestor).")
+            raise serializers.ValidationError("Tipo inválido. Use  'Professor' ou 'Gestor'.")
         return value
 
     def create(self, validated_data):
@@ -56,14 +56,14 @@ class SalasSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DisciplinaSerializer(serializers.ModelSerializer):
-    professor = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(tipo='G'))
+    professor = serializers.PrimaryKeyRelatedField(queryset=Usuario.objects.filter(tipo='Professor'))
 
     class Meta:
         model = Disciplina
         fields = '__all__'
     def validate_professor(self, value):
-        if value.tipo != 'G':
-            raise serializers.ValidationError("O usuário deve ser um Gestor!.")
+        if value.tipo != 'Professor':
+            raise serializers.ValidationError("O usuário deve ser um Professor!.")
         return value
 
 class ReservaSerializer(serializers.ModelSerializer):
