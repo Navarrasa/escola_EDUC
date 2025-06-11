@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
 
-    SalasListCreateAPIView,
+    SalaListCreateAPIView,
     UsuarioListCreateView,
     UsuarioRetrieveUpdateDestroyView,
     DisciplinaListCreateView,
@@ -18,7 +18,7 @@ app_name = 'app'
 
 urlpatterns = [
     # Salas
-    path('salas/', SalasListCreateAPIView.as_view(), name='salas-list-create'),
+    path('salas/', SalaListCreateAPIView.as_view(), name='salas-list-create'),
 
     # Usuários
     path('usuarios/', UsuarioListCreateView.as_view(), name='usuario-list-create'),

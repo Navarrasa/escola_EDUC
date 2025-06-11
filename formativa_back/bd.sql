@@ -1,5 +1,5 @@
-create database cadastro;
 -- drop database cadastro;
+create database cadastro;
 use cadastro;
 
 -- SELECT * FROM app_usuario;

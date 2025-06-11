@@ -1,86 +1,167 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from .constants import TIPO_USUARIO, PERIODO_CHOICES
 
-# Create your models here.
 
 class Usuario(AbstractUser):
-    TIPO_USUARIO = [
-        ('Gestor', 'Gestor'),
-        ('Professor', 'Professor')
-    ]
+    """Modelo de usuário personalizado com tipos Gestor e Professor."""
+    tipo = models.CharField(
+        max_length=10,
+        choices=TIPO_USUARIO,
+        default='PROFESSOR',
+        help_text="Tipo de usuário (Gestor ou Professor)."
+    )
+    ni = models.PositiveIntegerField(
+        unique=True,
+        help_text="Número de identificação único."
+    )
+    email = models.EmailField(
+        unique=True,
+        blank=True,
+        null=True,
+        help_text="E-mail do usuário."
+    )
+    telefone = models.CharField(
+        max_length=15,
+        blank=True,
+        null=True,
+        validators=[RegexValidator(r'^\+?1?\d{9,15}$', 'Formato de telefone inválido.')],
+        help_text="Telefone no formato +5511999999999."
+    )
+    data_nascimento = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Data de nascimento do usuário."
+    )
+    data_contratacao = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Data de contratação do usuário."
+    )
 
-    tipo = models.CharField(max_length=10, choices=TIPO_USUARIO, help_text="Tipo de usuário", null=False, blank=False, default='Professor')
-    ni = models.PositiveIntegerField()
-    email = models.EmailField(null=True, blank=True)
-    telefone = models.CharField(max_length=15, blank=True, null=True)
-    data_nascimento = models.DateField(blank=True, null=True)
-    data_contratacao = models.DateField(blank=True, null=True)
-
-    REQUIRED_FIELDS = ['ni', 'data_nascimento', 'data_contratacao','tipo']
+    REQUIRED_FIELDS = ['ni', 'email', 'tipo']  # Ajustado para consistência com blank/null
 
     def __str__(self):
-        return f"{self.get_tipo_display()} {self.username}"
+        return f"{self.get_tipo_display()} - {self.username} ({self.ni})"
+
+    class Meta:
+        indexes = [models.Index(fields=['ni'])]
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
 
 
 class Disciplina(models.Model):
-
-    nome = models.CharField(max_length=100)
-    curso = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True, null=True)
-    carga_horaria = models.PositiveIntegerField()
-    professor = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name='disciplinas', null=True, blank=True, limit_choices_to={'tipo':'Professor'})
+    """Modelo para representar disciplinas acadêmicas."""
+    nome = models.CharField(max_length=100, help_text="Nome da disciplina.")
+    curso = models.CharField(max_length=100, help_text="Curso associado à disciplina.")
+    descricao = models.TextField(blank=True, null=True, help_text="Descrição da disciplina.")
+    carga_horaria = models.PositiveIntegerField(help_text="Carga horária em horas.")
+    professor = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        related_name='disciplinas',
+        null=True,
+        blank=True,
+        limit_choices_to={'tipo': 'PROFESSOR'},
+        help_text="Professor responsável pela disciplina."
+    )
 
     def __str__(self):
-        return f"{self.nome}"
-    
+        return f"{self.nome} ({self.curso})"
 
-class Salas(models.Model):
-    nome = models.CharField(max_length=100, null=False, blank=False)
-    capacidade = models.PositiveIntegerField()
-    id_professor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='salas',null=True,blank=True, limit_choices_to={'tipo':'Professor'})
-    
+    class Meta:
+        verbose_name = "Disciplina"
+        verbose_name_plural = "Disciplinas"
+
+
+class Sala(models.Model):
+    """Modelo para representar salas disponíveis."""
+    nome = models.CharField(max_length=100, help_text="Nome ou identificador da sala.")
+    capacidade = models.PositiveIntegerField(help_text="Capacidade máxima da sala.")
+    professor_responsavel = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        related_name='salas',
+        null=True,
+        blank=True,
+        limit_choices_to={'tipo': 'PROFESSOR'},
+        help_text="Professor responsável pela sala, se aplicável."
+    )
+
     def save(self, *args, **kwargs):
-        if self.pk is None: 
-            if self.id_professor is not None:
-                if Salas.objects.filter(id_professor=self.id_professor).exists():
-                    raise ValidationError("Um professor não pode ocupar mais de uma sala!")
-        else:
-            if self.id_professor is not None:
-                if Salas.objects.filter(id_professor=self.id_professor).exclude(pk=self.pk).exists():
-                    raise ValidationError("Um professor não pode ocupar uma sala já ocupada!")
+        """Garante que um professor não seja associado a mais de uma sala."""
+        if self.professor_responsavel:
+            existing = Sala.objects.filter(professor_responsavel=self.professor_responsavel)
+            if self.pk:
+                existing = existing.exclude(pk=self.pk)
+            if existing.exists():
+                raise ValidationError("Um professor não pode ser responsável por mais de uma sala.")
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
-        return self.nome
+        return f"Sala {self.nome} (Capacidade: {self.capacidade})"
+
+    class Meta:
+        verbose_name = "Sala"
+        verbose_name_plural = "Salas"
 
 
 class Reserva(models.Model):
-    PERIODO_CHOICES = [
-        ('M', 'Manhã'),
-        ('T', 'Tarde'),
-        ('N', 'Noite')
-    ]
-
-    data_inicio = models.DateTimeField()
-    data_termino = models.DateTimeField()
-    periodo = models.CharField(max_length=1, choices=PERIODO_CHOICES, help_text="Período da reserva")
-    sala_reservada = models.ForeignKey(Salas, on_delete=models.CASCADE, related_name='reservas')
-    professor_responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='reservas', limit_choices_to={'tipo':'Professor'})
-    disciplina_associada = models.ForeignKey(Disciplina, on_delete=models.CASCADE, related_name='reservas')
+    """Modelo para representar reservas de salas."""
+    data_inicio = models.DateTimeField(help_text="Data e hora de início da reserva.")
+    data_termino = models.DateTimeField(help_text="Data e hora de término da reserva.")
+    periodo = models.CharField(
+        max_length=5,  # Ajustado para corresponder a PERIODO_CHOICES
+        choices=PERIODO_CHOICES,
+        help_text="Período da reserva (Manhã, Tarde, Noite)."
+    )
+    sala_reservada = models.ForeignKey(
+        Sala,
+        on_delete=models.CASCADE,
+        related_name='reservas',
+        help_text="Sala reservada."
+    )
+    professor_responsavel = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='reservas',
+        limit_choices_to={'tipo': 'PROFESSOR'},
+        help_text="Professor responsável pela reserva."
+    )
+    disciplina_associada = models.ForeignKey(
+        Disciplina,
+        on_delete=models.CASCADE,
+        related_name='reservas',
+        help_text="Disciplina associada à reserva."
+    )
 
     def save(self, *args, **kwargs):
+        """Valida que não há conflitos de horário para a mesma sala."""
+        if self.data_termino <= self.data_inicio:
+            raise ValidationError("A data de término deve ser posterior à data de início.")
 
-        if self.pk is None:
-            if self.sala_reservada is not None:
-                if Reserva.objects.filter(sala_reservada=self.sala_reservada):
-                    raise ValidationError("Você não pode reservar uma sala que já está reservada!")
-            else:
-                if self.sala_reservada is not None:
-                    if Reserva.objects.filter(sala_reservada=self.sala_reservada).exclude(pk=self.pk).exists():
-                        raise ValidationError("Você não pode reservar uma sala que já está reservada!")
+        # Verifica conflitos de horário
+        overlapping = Reserva.objects.filter(
+            sala_reservada=self.sala_reservada,
+            data_inicio__lt=self.data_termino,
+            data_termino__gt=self.data_inicio
+        )
+        if self.pk:
+            overlapping = overlapping.exclude(pk=self.pk)
+        if overlapping.exists():
+            raise ValidationError("A sala já está reservada para este período.")
+
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Sala {self.sala_reservada} reservada à ({self.get_periodo_display()}) - ({self.data_inicio} - {self.data_termino})"
+        return f"Reserva {self.sala_reservada.nome} ({self.get_periodo_display()}) {self.data_inicio.strftime('%d/%m/%Y %H:%M')} - {self.data_termino.strftime('%d/%m/%Y %H:%M')}"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['data_inicio', 'data_termino']),
+            models.Index(fields=['sala_reservada'])
+        ]
+        verbose_name = "Reserva"
+        verbose_name_plural = "Reservas"
