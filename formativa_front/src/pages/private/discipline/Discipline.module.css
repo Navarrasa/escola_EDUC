@@ -173,10 +173,10 @@ textarea.input {
 
 /* Mensagem de erro */
 .error {
-  color: #ef4444; /* Vermelho para erros, consistente com botão de exclusão */
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  text-align: center;
+  color: #ff0000;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding: 10px;
 }
 
 /* Responsividade */

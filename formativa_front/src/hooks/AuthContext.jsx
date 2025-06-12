@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const userData = localStorage.getItem('user');
     return userData ? JSON.parse(userData) : null;
     });
-
+    const [loginFailError, setLoginFailError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // console.log(authTokens);
@@ -58,12 +58,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userObj));
     setAuthTokens({ access, refresh });
     setUser(userObj);
+    setLoginFailError(null);
     setIsLoading(false);
 
     // Depuração: verifique o valor de user após login
     // console.log('user após login:', userObj);
   } catch (error) {
-    alert('Erro ao fazer login:', error);
+    setLoginFailError("Error ao realizar o login! Verifique login e senha!")
     setIsLoading(false);
     return
   }
@@ -94,6 +95,7 @@ export const AuthProvider = ({ children }) => {
                 loginUser,
                 logoutUser,
                 isLoading,
+                loginFailError,
             }}
         >
             {children}

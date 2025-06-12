@@ -3,7 +3,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Usuario, Disciplina, Sala, Reserva
 from .serializers import UsuarioSerializer, DisciplinaSerializer, SalasSerializer, ReservaSerializer, LoginSerializer
 from .permissions import IsGestor, IsProfessorOrGestor, IsProfessor
-
+from django.http import JsonResponse
+from .constants import PERIODO_CHOICES
 
 class LoginView(TokenObtainPairView):
     """View para autenticação de usuários com JWT.
@@ -114,6 +115,23 @@ class SalaRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
 
 
+class SalaPorProfessorListView(ListAPIView):
+    """View para listar Salas de um professor específico.
+
+    Permite que professores visualizem apenas suas próprias Salas.
+    Filtra as Salas com base no usuário logado (professor).
+    Métodos HTTP suportados: GET (listar)
+    Permissões: Apenas professores (IsProfessor)
+    """
+    serializer_class = SalasSerializer
+    permission_classes = [IsProfessor]
+    lookup_field = 'ni'
+
+    def get_queryset(self):
+        """Retorna as disciplinas associadas ao professor logado."""
+        return Sala.objects.filter(professor=self.request.user)
+
+
 class ReservaListCreateView(ListCreateAPIView):
     """View para listar e criar reservas.
 
@@ -163,3 +181,12 @@ class ReservaPorProfessorListView(ListAPIView):
     def get_queryset(self):
         """Retorna as reservas associadas ao professor logado."""
         return Reserva.objects.filter(professor_responsavel=self.request.user)
+    
+
+# Obter dados dos períodos em Json, para utilizar no FrontEnd
+def getPeriodoData(self):
+    data = [{"value": value, "label": label} for value, label in PERIODO_CHOICES]
+    return JsonResponse(data, safe=False)
+    # safe=false, permite que seja enviado listas na resposta Json.
+    # exemplo: [{"data": data, "valor":valor}] -> uma lista de objetos(dict)
+    

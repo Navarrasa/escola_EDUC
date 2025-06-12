@@ -11,7 +11,7 @@ export function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { loginUser, authTokens } = useContext(AuthContext);
+  const { loginUser, authTokens, loginFailError } = useContext(AuthContext);
 
   useEffect(() => {
     const previousTheme = document.documentElement.getAttribute('data-theme');
@@ -52,6 +52,7 @@ export function Login() {
           </div>
           <div>
             <h1>Bem-vindo! Faça o seu login</h1>
+            {loginFailError && <div className={styles.error}>{loginFailError}</div>}
           </div>
           <form className={styles.FormGroup} onSubmit={handleLogin}>
             <input

@@ -2,6 +2,8 @@ from django.urls import path
 from .views import (
 
     SalaListCreateAPIView,
+    SalaPorProfessorView,
+    SalaRetrieveUpdateDestroyView,
     UsuarioListCreateView,
     UsuarioRetrieveUpdateDestroyView,
     UsuarioProfessorView,
@@ -11,7 +13,8 @@ from .views import (
     ReservaListCreateView,
     ReservaRetrieveDestroyAPIView,
     ReservaPorProfessorListView,
-    LoginView
+    LoginView,
+    getPeriodoData,
 
 )
 
@@ -20,6 +23,8 @@ app_name = 'app'
 urlpatterns = [
     # Salas
     path('salas/', SalaListCreateAPIView.as_view(), name='salas-list-create'),
+    path('salas/<int:pk>', SalaRetrieveUpdateDestroyView.as_view(), name='salas-list-create'),
+    path('salas/professores/<int:ni>/', SalaPorProfessorView.as_view(), name='salas-list-create'),
 
     # Usuários
     path('usuarios/', UsuarioListCreateView.as_view(), name='usuario-list-create'),
@@ -38,4 +43,7 @@ urlpatterns = [
     
     # JWT
     path('auth/', LoginView.as_view(), name='token_obtain_pair'),
+
+    # Data extra
+    path('periodos/', view=getPeriodoData, name='get_periodo_data')
 ]
