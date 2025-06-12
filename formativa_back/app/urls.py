@@ -4,6 +4,7 @@ from .views import (
     SalaListCreateAPIView,
     UsuarioListCreateView,
     UsuarioRetrieveUpdateDestroyView,
+    UsuarioProfessorView,
     DisciplinaListCreateView,
     DisciplinaRetrieveUpdateDestroyView,
     DisciplinaPorProfessorListView,
@@ -22,6 +23,7 @@ urlpatterns = [
 
     # Usuários
     path('usuarios/', UsuarioListCreateView.as_view(), name='usuario-list-create'),
+    path('usuarios/professores/', UsuarioProfessorView.as_view(), name='usuario-professor-list'),
     path('usuarios/<int:pk>/', UsuarioRetrieveUpdateDestroyView.as_view(), name='usuario-detail'),
 
     # Disciplinas

@@ -5,13 +5,12 @@ import styles from '../../private/discipline/Discipline.module.css';
 
 /**
  * Componente Discipline
- * Exibe e gerencia disciplinas, permitindo que Gestores criem/excluam disciplinas
+ * Exibe e gerencia disciplinas, permitindo que Gestores criem/editarem/excluam disciplinas
  * e Professores visualizem apenas suas próprias disciplinas.
  */
 export function Discipline() {
-  // Estado para armazenar a lista de disciplinas
   const [disciplinas, setDisciplinas] = useState([]);
-  // Estado para o formulário de nova disciplina
+  const [professores, setProfessores] = useState([]);
   const [newDiscipline, setNewDiscipline] = useState({
     nome: '',
     curso: '',
@@ -19,27 +18,22 @@ export function Discipline() {
     carga_horaria: '',
     professor: ''
   });
-  // Estado para erros no formulário ou requisições
+  const [editingDiscipline, setEditingDiscipline] = useState(null); // Novo estado para edição
   const [error, setError] = useState(null);
-  // Contexto de autenticação
   const { user, authTokens } = useContext(AuthContext);
-  // Verifica se o usuário é Gestor
   const isGestor = user?.tipo === 'GESTOR';
+  const API_BASE_URL = 'http://127.0.0.1:8000/app';
 
-  /**
-   * Carrega as disciplinas com base no tipo de usuário
-   * Gestores veem todas as disciplinas; Professores veem apenas as suas
-   */
+  // Carrega disciplinas
   useEffect(() => {
     if (!user || !authTokens?.access) return;
 
     const source = axios.CancelToken.source();
     const token = authTokens.access;
     const ni = user.ni;
-    // Corrigido: Renomeado 'urlunderstand_url' para 'url'
     const url = isGestor
-      ? 'http://127.0.0.1:8000/app/disciplinas/'
-      : `http://127.0.0.1:8000/app/disciplinas/professores/${ni}/`;
+      ? `${API_BASE_URL}/disciplinas/`
+      : `${API_BASE_URL}/disciplinas/professores/${ni}/`;
 
     axios
       .get(url, {
@@ -48,28 +42,46 @@ export function Discipline() {
       })
       .then((response) => {
         setDisciplinas(response.data);
-        setError(null); // Limpa erros anteriores
+        setError(null);
       })
       .catch((error) => {
         if (axios.isCancel(error)) return;
         console.error('Erro ao buscar disciplinas:', error);
-        setError('Erro ao carregar disciplinas. Tente novamente.');
+        setError(error.response?.data?.detail || 'Erro ao carregar disciplinas.');
       });
 
-    // Cleanup: Cancela a requisição ao desmontar o componente
     return () => source.cancel('Requisição cancelada');
   }, [user, authTokens, isGestor]);
 
-  /**
-   * Adiciona uma nova disciplina (apenas Gestores)
-   * @param {Event} e - Evento do formulário
-   */
-  const handleAddDiscipline = async (e) => {
+  // Carrega professores (apenas para Gestores)
+  useEffect(() => {
+    if (!isGestor || !authTokens?.access) return;
+
+    const source = axios.CancelToken.source();
+    axios
+      .get(`${API_BASE_URL}/usuarios/professores/`, {
+        headers: { Authorization: `Bearer ${authTokens.access}` },
+        cancelToken: source.token,
+      })
+      .then((response) => {
+        setProfessores(response.data);
+        setError(null);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) return;
+        console.error('Erro ao buscar professores:', error);
+        setError(error.response?.data?.detail || 'Erro ao carregar professores.');
+      });
+
+    return () => source.cancel('Requisição cancelada');
+  }, [authTokens, isGestor]);
+
+  // Função para submissão do formulário (adicionar ou editar)
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isGestor) return;
 
-    // Validação básica do formulário
-    if (!newDiscipline.nome || !newDiscipline.curso || !newDiscipline.carga_horaria) {
+    if (!newDiscipline.nome || !newDiscipline.curso || !newDiscipline.carga_horaria || !newDiscipline.professor) {
       setError('Preencha todos os campos obrigatórios.');
       return;
     }
@@ -79,24 +91,44 @@ export function Discipline() {
     }
 
     try {
-      const response = await axios.post(
-        'http://127.0.0.1:8000/app/disciplinas/',
-        newDiscipline,
-        { headers: { Authorization: `Bearer ${authTokens.access}` } }
-      );
-      setDisciplinas([...disciplinas, response.data]);
-      setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
+      if (editingDiscipline) {
+        // Modo edição: PATCH
+        const response = await axios.patch(
+          `${API_BASE_URL}/disciplinas/${editingDiscipline.id}/`,
+          newDiscipline,
+          { headers: { Authorization: `Bearer ${authTokens.access}` } }
+        );
+        setDisciplinas(disciplinas.map((d) => (d.id === editingDiscipline.id ? response.data : d)));
+        setEditingDiscipline(null); // Sai do modo edição
+      } else {
+        // Modo adição: POST
+        const response = await axios.post(
+          `${API_BASE_URL}/disciplinas/`,
+          newDiscipline,
+          { headers: { Authorization: `Bearer ${authTokens.access}` } }
+        );
+        setDisciplinas([...disciplinas, response.data]);
+      }
+      setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' }); // Reseta formulário
       setError(null);
     } catch (error) {
-      console.error('Erro ao adicionar disciplina:', error);
-      setError('Erro ao adicionar disciplina. Tente novamente.');
+      // console.error('Erro ao salvar disciplina:', error);
+      setError(error.response?.data?.detail || 'Erro ao salvar disciplina.');
     }
   };
 
-  /**
-   * Exclui uma disciplina
-   * @param {number} id - ID da disciplina a ser excluída
-   */
+  // Função para iniciar a edição
+  const startEditing = (disciplina) => {
+    setEditingDiscipline(disciplina); // Define a disciplina sendo editada
+    setNewDiscipline({
+      nome: disciplina.nome,
+      curso: disciplina.curso,
+      descricao: disciplina.descricao || '',
+      carga_horaria: disciplina.carga_horaria,
+      professor: disciplina.professor.toString() // Converte para string para o select
+    });
+  };
+
   const handleDeleteDiscipline = async (id) => {
     if (!isGestor) return;
 
@@ -104,55 +136,38 @@ export function Discipline() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/app/disciplinas/${id}/`, {
+      await axios.delete(`${API_BASE_URL}/disciplinas/${id}/`, {
         headers: { Authorization: `Bearer ${authTokens.access}` },
       });
       setDisciplinas(disciplinas.filter((disciplina) => disciplina.id !== id));
       setError(null);
     } catch (error) {
       console.error('Erro ao excluir disciplina:', error);
-      setError('Erro ao excluir disciplina.');
+      setError(error.response?.data?.detail || 'Erro ao excluir disciplina.');
     }
   };
 
-  /**
-   * Atualiza uma disciplina (apenas Gestores)
-   * @param {number} id - ID da disciplina a ser atualizada
-   * @param {Object} updatedData - Dados atualizados da disciplina
-   */
-  const handleUpdateDiscipline = async (id, updatedData) => {
-    if (!isGestor) return;
-
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/app/disciplinas/${id}/`,
-        updatedData,
-        { headers: { Authorization: `Bearer ${authTokens.access}` } }
-      );
-      setDisciplinas(disciplinas.map((d) => (d.id === id ? response.data : d)));
-      setError(null);
-    } catch (error) {
-      console.error('Erro ao atualizar disciplina:', error);
-      setError('Erro ao atualizar disciplina.');
-    }
+  // Função para obter o nome do professor pelo ID
+  const getProfessorName = (professorId) => {
+    const professor = professores.find((p) => p.id === Number(professorId));
+    return professor ? professor.username : 'Desconhecido';
   };
 
   return (
     <div className={styles.container}>
       <h1>{isGestor ? 'Gerenciar Disciplinas' : 'Minhas Disciplinas'}</h1>
 
-      {/* Exibe mensagens de erro, se houver */}
       {error && <div className={styles.error}>{error}</div>}
 
-      {/* Formulário para adicionar disciplina (apenas Gestores) */}
       {isGestor && (
-        <form onSubmit={handleAddDiscipline} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <input
             className={styles.input}
             type="text"
             placeholder="Nome da Disciplina"
             value={newDiscipline.nome}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, nome: e.target.value })}
+            aria-label="Nome da disciplina"
           />
           <input
             className={styles.input}
@@ -160,6 +175,7 @@ export function Discipline() {
             placeholder="Curso"
             value={newDiscipline.curso}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, curso: e.target.value })}
+            aria-label="Curso"
           />
           <input
             className={styles.input}
@@ -167,25 +183,46 @@ export function Discipline() {
             placeholder="Carga Horária"
             value={newDiscipline.carga_horaria}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, carga_horaria: e.target.value })}
+            aria-label="Carga horária"
           />
-          <input
+          <select
             className={styles.input}
-            type="number"
-            placeholder="ID do Professor"
             value={newDiscipline.professor}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, professor: e.target.value })}
-          />
+            aria-label="Professor"
+          >
+            <option value="">Selecione um professor</option>
+            {professores.map((professor) => (
+              <option key={professor.id} value={professor.id}>
+                {professor.username}
+              </option>
+            ))}
+          </select>
           <textarea
             className={styles.input}
             placeholder="Descrição"
             value={newDiscipline.descricao}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, descricao: e.target.value })}
+            aria-label="Descrição"
           />
-          <button type="submit" className={styles.button}>Adicionar Disciplina</button>
+          <button type="submit" className={styles.button}>
+            {editingDiscipline ? 'Salvar Alterações' : 'Adicionar Disciplina'}
+          </button>
+          {editingDiscipline && (
+            <button
+              type="button"
+              className={styles.button}
+              onClick={() => {
+                setEditingDiscipline(null);
+                setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
+              }}
+            >
+              Cancelar
+            </button>
+          )}
         </form>
       )}
 
-      {/* Lista de disciplinas */}
       <div>
         {disciplinas.map((disciplina) => (
           <div key={disciplina.id} className={styles.disciplineCard}>
@@ -194,16 +231,12 @@ export function Discipline() {
             <p><strong>Carga Horária:</strong> {disciplina.carga_horaria}</p>
             <p><strong>Descrição:</strong> {disciplina.descricao}</p>
             {isGestor && (
-              <p><strong>Professor:</strong> {disciplina.professor}</p>
+              <p><strong>Professor:</strong> {getProfessorName(disciplina.professor)}</p>
             )}
             {isGestor && (
               <div className={styles.actionButtons}>
-                <button onClick={() => handleUpdateDiscipline(disciplina.id, disciplina)}>
-                  Editar
-                </button>
-                <button onClick={() => handleDeleteDiscipline(disciplina.id)}>
-                  Excluir
-                </button>
+                <button onClick={() => startEditing(disciplina)}>Editar</button>
+                <button onClick={() => handleDeleteDiscipline(disciplina.id)}>Excluir</button>
               </div>
             )}
           </div>

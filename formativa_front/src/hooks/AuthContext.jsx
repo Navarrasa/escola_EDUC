@@ -63,8 +63,9 @@ export const AuthProvider = ({ children }) => {
     // Depuração: verifique o valor de user após login
     // console.log('user após login:', userObj);
   } catch (error) {
-    console.error('Erro ao fazer login:', error);
-    throw error;
+    alert('Erro ao fazer login:', error);
+    setIsLoading(false);
+    return
   }
 };
 

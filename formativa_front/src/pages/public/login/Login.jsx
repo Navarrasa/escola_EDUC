@@ -16,18 +16,16 @@ export function Login() {
   useEffect(() => {
     const previousTheme = document.documentElement.getAttribute('data-theme');
     document.documentElement.setAttribute('data-theme', 'light');
+    
+    if (authTokens) {
+      navigate('/');
+    }
 
     return () => {
       if (previousTheme) {
         document.documentElement.setAttribute('data-theme', previousTheme);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    if (authTokens) {
-      navigate('/');
-    }
   }, [authTokens, navigate]);
 
   const handleLogin = async (e) => {
@@ -39,7 +37,7 @@ export function Login() {
 
     if (success) {
       navigate('/perfil');
-  };
+    }
 }
 
   return (

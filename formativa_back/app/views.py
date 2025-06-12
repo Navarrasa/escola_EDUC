@@ -39,6 +39,11 @@ class UsuarioRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsGestor]
     lookup_field = 'pk'
 
+class UsuarioProfessorView(ListAPIView):
+    queryset = Usuario.objects.filter(tipo = 'PROFESSOR')
+    serializer_class = UsuarioSerializer
+    permission_classes = [IsGestor]
+
 
 class DisciplinaListCreateView(ListCreateAPIView):
     """View para listar e criar disciplinas.
