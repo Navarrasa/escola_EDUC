@@ -80,6 +80,7 @@ export function Discipline() {
       })
       .then((response) => {
         setProfessores(response.data); // Salva a lista de professores no estado
+        // console.log(response.data);
         setError(null);
       })
       .catch((error) => {

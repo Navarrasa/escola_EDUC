@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
 
     SalaListCreateAPIView,
-    SalaPorProfessorView,
+    SalaPorProfessorListView,
     SalaRetrieveUpdateDestroyView,
     UsuarioListCreateView,
     UsuarioRetrieveUpdateDestroyView,
@@ -24,7 +24,7 @@ urlpatterns = [
     # Salas
     path('salas/', SalaListCreateAPIView.as_view(), name='salas-list-create'),
     path('salas/<int:pk>', SalaRetrieveUpdateDestroyView.as_view(), name='salas-list-create'),
-    path('salas/professores/<int:ni>/', SalaPorProfessorView.as_view(), name='salas-list-create'),
+    path('salas/professores/', SalaPorProfessorListView.as_view(), name='salas-list-create'),
 
     # Usuários
     path('usuarios/', UsuarioListCreateView.as_view(), name='usuario-list-create'),

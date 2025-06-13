@@ -19,9 +19,10 @@ function App() {
   const { authTokens } = useContext(AuthContext);
 
   const ProtectedRoute = ({ children }) => {
+    // console.log(authTokens)
     if (!authTokens) return <Navigate to="/login" />;
     return children;
-  };
+    };
 
   return (
     <AuthProvider>

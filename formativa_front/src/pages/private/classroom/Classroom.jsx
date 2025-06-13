@@ -14,15 +14,15 @@ export function Classroom() {
   // Estados principais
   const [classrooms, setClassrooms] = useState([]); // Lista de Salas de Aula carregadas
   const [professores, setProfessores] = useState([]); // Lista de professores (apenas se o usuário for GESTOR)
-
+  const [periodo, setPeriodos] = useState([]);
   // Objeto com os campos do formulário de criação/edição
   const [newClassroom, setNewClassroom] = useState({
     nome: '',
     curso: '',
-    descricao: '',
     qtde_pessoas: '',
     periodo: '',
-    professor: ''
+    professor: '',
+    descricao: '',
   });
 
   const [editingClassroom, setEditingClassroom] = useState(null); // Classroom sendo editada (null = modo criação)
@@ -47,8 +47,8 @@ export function Classroom() {
 
     // Define a URL com base no tipo de usuário
     const url = isGestor
-      ? `${API_BASE_URL}/salas/` // GESTOR vê todas
-      : `${API_BASE_URL}/salas/professores/${ni}/`; // PROFESSOR vê apenas as suas
+      ? `${API_BASE_URL}/salas/` // GESTOR vê todas as salas
+      : `${API_BASE_URL}/salas/professores/${ni}/`; // PROFESSOR vê apenas as suas salas
 
     // Faz a requisição GET para carregar as disciplinas
     axios
@@ -72,7 +72,6 @@ export function Classroom() {
   // Hook para carregar professores se o usuário for um GESTOR
   useEffect(() => {
     if (!isGestor || !authTokens?.access) return;
-
     const source = axios.CancelToken.source();
     axios
       .get(`${API_BASE_URL}/usuarios/professores/`, {
@@ -91,7 +90,28 @@ export function Classroom() {
 
     return () => source.cancel('Requisição cancelada');
   }, [authTokens, isGestor]);
+  // Hook para carregar os períodos das aulas disponíveis
+  useEffect(() => {
+    if (!isGestor || !authTokens?.access) return;
+    const periodos = axios.CancelToken.source();
+    axios
+      .get(`${API_BASE_URL}/periodos/`, {
+        headers: { Authorization: `Bearer ${authTokens.access}` },
+        cancelToken: periodos.token,
+      })
+      .then((response) => {
+        setPeriodos(response.data); // Salva a lista de professores no estado
+        // console.log(response.data)
+        setError(null);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) return;
+        console.error('Erro ao buscar os períodos:', error);
+        setError(error.response?.data?.detail || 'Erro ao carregar períodos.');
+      });
 
+    return () => periodos.cancel('Requisição cancelada');
+  }, [authTokens, isGestor]);
   /**
    * Manipula o envio do formulário de disciplina (criação ou edição)
    */
@@ -113,7 +133,7 @@ export function Classroom() {
       if (editingClassroom) {
         // Atualiza uma disciplina existente (modo edição)
         const response = await axios.patch(
-          `${API_BASE_URL}/disciplinas/${editingClassroom.id}/`,
+          `${API_BASE_URL}/salas/${editingClassroom.id}/`,
           newClassroom,
           { headers: { Authorization: `Bearer ${authTokens.access}` } }
         );
@@ -124,7 +144,7 @@ export function Classroom() {
       } else {
         // Cria uma nova disciplina
         const response = await axios.post(
-          `${API_BASE_URL}/disciplinas/`,
+          `${API_BASE_URL}/salas/`,
           newClassroom,
           { headers: { Authorization: `Bearer ${authTokens.access}` } }
         );
@@ -167,7 +187,7 @@ export function Classroom() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/disciplinas/${id}/`, {
+      await axios.delete(`${API_BASE_URL}/salas/${id}/`, {
         headers: { Authorization: `Bearer ${authTokens.access}` },
       });
 
@@ -224,14 +244,14 @@ export function Classroom() {
           />
           <select
             className={styles.input}
-            value={newClassroom.professor}
-            onChange={(e) => setNewClassroom({ ...newClassroom, professor: e.target.value })}
+            value={newClassroom.periodo}
+            onChange={(e) => setNewClassroom({ ...newClassroom, periodo: e.target.value })}
             aria-label="Período"
           >
             <option value="">Período da Aula*</option>
-            {professores.map((professor) => (
-              <option key={professor.id} value={professor.id}>
-                {professor.username}
+            {periodo.map((periodo) => (
+              <option key={periodo.id} value={periodo.id}>
+                {periodo.label}
               </option>
             ))}
           </select>
