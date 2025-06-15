@@ -98,7 +98,13 @@ class SalaListCreateAPIView(ListCreateAPIView):
     """
     queryset = Sala.objects.all()
     serializer_class = SalasSerializer
-    permission_classes = [IsProfessorOrGestor]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [IsProfessorOrGestor]
+        else:
+            self.permission_classes = [IsGestor]
+        return super().get_permissions()
 
 
 class SalaRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):

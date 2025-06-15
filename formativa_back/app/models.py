@@ -79,21 +79,24 @@ class Disciplina(models.Model):
 class Sala(models.Model):
     """Modelo para representar salas disponíveis."""
     nome = models.CharField(max_length=100, help_text="Nome ou identificador da sala.")
+    curso = models.CharField(max_length=100, help_text="Curso associado à sala.")
+    descricao = models.TextField(blank=True, null=True, help_text="Descrição da sala.")
     capacidade = models.PositiveIntegerField(help_text="Capacidade máxima da sala.")
-    professor_responsavel = models.ForeignKey(
+    professor = models.ForeignKey(
         Usuario,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='salas',
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         limit_choices_to={'tipo': 'PROFESSOR'},
         help_text="Professor responsável pela sala, se aplicável."
     )
+    periodo = models.CharField(max_length=5, choices=PERIODO_CHOICES, help_text="Período em que a sala está disponível.")
 
     def save(self, *args, **kwargs):
         """Garante que um professor não seja associado a mais de uma sala."""
-        if self.professor_responsavel:
-            existing = Sala.objects.filter(professor_responsavel=self.professor_responsavel)
+        if self.professor:
+            existing = Sala.objects.filter(professor=self.professor)
             if self.pk:
                 existing = existing.exclude(pk=self.pk)
             if existing.exists():

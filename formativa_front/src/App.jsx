@@ -16,6 +16,7 @@ import { Reservation } from './pages/private/reservation/Reservation';
 import { TeacherRegistration } from './pages/private/teacherRegistration/TeacherRegistration';
 
 function App() {
+  
   const { authTokens } = useContext(AuthContext);
 
   const ProtectedRoute = ({ children }) => {

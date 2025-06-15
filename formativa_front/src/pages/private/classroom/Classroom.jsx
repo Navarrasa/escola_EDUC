@@ -19,7 +19,7 @@ export function Classroom() {
   const [newClassroom, setNewClassroom] = useState({
     nome: '',
     curso: '',
-    qtde_pessoas: '',
+    capacidade: '',
     periodo: '',
     professor: '',
     descricao: '',
@@ -100,8 +100,8 @@ export function Classroom() {
         cancelToken: periodos.token,
       })
       .then((response) => {
-        setPeriodos(response.data); // Salva a lista de professores no estado
-        // console.log(response.data)
+        // console.log('Periodos:', response.data);
+        setPeriodos(response.data);
         setError(null);
       })
       .catch((error) => {
@@ -114,52 +114,66 @@ export function Classroom() {
   }, [authTokens, isGestor]);
   /**
    * Manipula o envio do formulário de disciplina (criação ou edição)
-   */
+   */ 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Impede o comportamento padrão do form
     if (!isGestor) return; // Apenas gestores podem submeter
 
     // Validações simples dos campos
-    if (!newClassroom.nome || !newClassroom.curso || !newClassroom.qtde_pessoas || !newClassroom.professor || !newClassroom.periodo) {
+    if (!newClassroom.nome || !newClassroom.curso || !newClassroom.capacidade || !newClassroom.professor || !newClassroom.periodo) {
       setError('Preencha todos os campos obrigatórios.');
       return;
     }
-    if (isNaN(newClassroom.qtde_pessoas) || newClassroom.qtde_pessoas <= 0) {
-      setError('A quantidade de alunos deve ser um número positivo.');
+    const capacidade = Number(newClassroom.capacidade);
+    if (isNaN(capacidade) || capacidade <= 0) {
+      setError('A capacidade deve ser um número positivo.');
       return;
     }
-
+    
+    // variável para facilitar o envio do payload
+    // payload é um objeto que contém os dados da nova sala de aula
+    // e é usado para enviar os dados para a API
+    const payload = {
+      nome: newClassroom.nome,
+      curso: newClassroom.curso,
+      capacidade: capacidade, 
+      periodo: newClassroom.periodo, 
+      professor: Number(newClassroom.professor), 
+      descricao: newClassroom.descricao || null, 
+    };
+    
     try {
-      if (editingClassroom) {
-        // Atualiza uma disciplina existente (modo edição)
-        const response = await axios.patch(
-          `${API_BASE_URL}/salas/${editingClassroom.id}/`,
-          newClassroom,
-          { headers: { Authorization: `Bearer ${authTokens.access}` } }
-        );
-
-        // Atualiza apenas a disciplina editada na lista -> c = classroom
-        setClassrooms(classrooms.map((c) => (c.id === editingClassroom.id ? response.data : c)));
-        setEditingClassroom(null); // Sai do modo edição
-      } else {
-        // Cria uma nova disciplina
-        const response = await axios.post(
-          `${API_BASE_URL}/salas/`,
-          newClassroom,
-          { headers: { Authorization: `Bearer ${authTokens.access}` } }
-        );
-
-        // Adiciona a nova disciplina à lista
-        setClassrooms([...classrooms, response.data]);
-      }
-
-      // Limpa o formulário
-      setNewClassroom({ nome: '', curso: '', descricao: '', qtde_pessoas: '', periodo: '', professor: '' });
+    if (editingClassroom) {
+      const response = await axios.patch(
+        `${API_BASE_URL}/salas/${editingClassroom.id}`,
+        payload,
+        { headers: { Authorization: `Bearer ${authTokens.access}` }}
+      );
+      // Atualiza a sala de aula editada na lista
+      // setClassrooms é uma função que atualiza o estado de classrooms
+      setClassrooms(classrooms.map((c) => (c.id === editingClassroom.id ? response.data : c)));
+      setEditingClassroom(null);
+    } else {
+      const response = await axios.post(
+        `${API_BASE_URL}/salas/`,
+        payload,
+        { headers: { Authorization: `Bearer ${authTokens.access}` } }
+      );
+      setClassrooms([...classrooms, response.data]);
+    }
+      // Limpa o formulário e reseta o estado de erro
+      setNewClassroom({ nome: '', curso: '', capacidade: '', periodo: '', professor: '', descricao: '' });
       setError(null);
     } catch (error) {
-      setError(error.response?.data?.detail || 'Erro ao salvar Sala de Aula.');
-    }
-  };
+        const errorData = error.response?.data;
+        if (errorData?.error?.includes('professor')) {
+          setError('Este professor já está associado a outra sala.');
+        } else {
+          setError(errorData?.detail || 'Este professor já está associado a outra sala.');
+        }
+        // console.error('Error response:', errorData);
+      }
+    };
 
   /**
    * Inicia o modo de edição para uma disciplina existente
@@ -171,9 +185,9 @@ export function Classroom() {
       nome: classrooms.nome,
       curso: classrooms.curso,
       descricao: classrooms.descricao || '',
-      carga_horaria: classrooms.carga_horaria,
-      periodo: classrooms.periodo.toString(), // Transforma em string para ser usado no <select>
-      professor: classrooms.professor.toString() // Transforma em string para ser usado no <select>
+      capacidade: classrooms.capacidade,
+      periodo: classrooms.periodo.toString(),
+      professor: classrooms.professor.toString(),
     });
   };
 
@@ -187,7 +201,7 @@ export function Classroom() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/salas/${id}/`, {
+      await axios.delete(`${API_BASE_URL}/salas/${id}`, {
         headers: { Authorization: `Bearer ${authTokens.access}` },
       });
 
@@ -238,8 +252,8 @@ export function Classroom() {
             className={styles.input}
             type="number"
             placeholder="Quantidade de Alunos*"
-            value={newClassroom.carga_horaria}
-            onChange={(e) => setNewClassroom({ ...newClassroom, carga_horaria: e.target.value })}
+            value={newClassroom.capacidade}
+            onChange={(e) => setNewClassroom({ ...newClassroom, capacidade: e.target.value })}
             aria-label="Quantidade de Alunos"
           />
           <select
@@ -249,9 +263,9 @@ export function Classroom() {
             aria-label="Período"
           >
             <option value="">Período da Aula*</option>
-            {periodo.map((periodo) => (
-              <option key={periodo.id} value={periodo.id}>
-                {periodo.label}
+            {periodo.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
               </option>
             ))}
           </select>
@@ -284,7 +298,7 @@ export function Classroom() {
               className={styles.button}
               onClick={() => {
                 setEditingClassroom(null);
-                setNewClassroom({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
+                setNewClassroom({ nome: '', curso: '', descricao: '', capacidade: '', professor: '' });
               }}
             >
               Cancelar
@@ -295,19 +309,19 @@ export function Classroom() {
 
       {/* Lista de disciplinas */}
       <div>
-        {classrooms.map((classrooms) => (
-          <div key={classrooms.id} className={styles.ClassroomCard}>
-            <h3>{classrooms.nome}</h3>
-            <p><strong>Curso:</strong> {classrooms.curso}</p>
-            <p><strong>Carga Horária:</strong> {classrooms.carga_horaria}</p>
-            <p><strong>Descrição:</strong> {classrooms.descricao}</p>
+        {classrooms.map((classroom) => (
+          <div key={classroom.id} className={styles.ClassroomCard}>
+            <h3>{classroom.nome}</h3>
+            <p><strong>Curso:</strong> {classroom.curso}</p>
+            <p><strong>Capacidade:</strong> {classroom.capacidade}</p>
+            <p><strong>Descrição:</strong> {classroom.descricao}</p>
             {isGestor && (
-              <p><strong>Professor:</strong> {getProfessorName(classrooms.professor)}</p>
+              <p><strong>Professor:</strong> {getProfessorName(classroom.professor)}</p>
             )}
             {isGestor && (
               <div className={styles.actionButtons}>
-                <button onClick={() => startEditing(classrooms)}>Editar</button>
-                <button onClick={() => handleDeleteClassroom(classrooms.id)}>Excluir</button>
+                <button onClick={() => startEditing(classroom)}>Editar</button>
+                <button onClick={() => handleDeleteClassroom(classroom.id)}>Excluir</button>
               </div>
             )}
           </div>
