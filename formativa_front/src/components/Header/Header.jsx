@@ -111,7 +111,6 @@ export function Header() {
                                 <div className={styles.themeMenu}>
                                 <div onClick={() => handleThemeChange('Claro')}>Tema Claro</div>
                                 <div onClick={() => handleThemeChange('Escuro')}>Tema Escuro</div>
-                                <div onClick={() => handleThemeChange('Sistema')}>Tema do Sistema</div>
                                 </div>
                             )}
                             </li>

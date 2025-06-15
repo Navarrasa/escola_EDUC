@@ -1,40 +1,21 @@
 import { useEffect, useState } from 'react';
 
+// Hook para gerenciar o tema (light ou dark) com persistência no localStorage
 export function useTheme() {
+  // Inicializa o tema com o valor do localStorage ou 'light' como padrão
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'system';
+    return localStorage.getItem('theme') || 'light';
   });
 
+  // Aplica o tema ao documento e atualiza no localStorage quando o tema mudar
   useEffect(() => {
-    const applyTheme = (selectedTheme) => {
-      if (selectedTheme === 'system') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      } else {
-        document.documentElement.setAttribute('data-theme', selectedTheme);
-      }
-    };
-
-    applyTheme(theme);
-
-    if (theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const listener = (e) => {
-        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-      };
-      mediaQuery.addEventListener('change', listener);
-      return () => mediaQuery.removeEventListener('change', listener);
-    }
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Função para alternar entre temas claro e escuro
   const changeTheme = (selectedTheme) => {
-    let normalizedTheme = selectedTheme.toLowerCase();
-
-    if (normalizedTheme === 'claro') normalizedTheme = 'light';
-    if (normalizedTheme === 'escuro') normalizedTheme = 'dark';
-    if (normalizedTheme === 'sistema') normalizedTheme = 'system';
-
-    localStorage.setItem('theme', normalizedTheme);
+    const normalizedTheme = selectedTheme.toLowerCase() === 'claro' ? 'light' : 'dark';
     setTheme(normalizedTheme);
   };
 
