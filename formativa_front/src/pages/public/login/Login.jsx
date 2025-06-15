@@ -7,18 +7,18 @@ import { AuthContext } from '../../../hooks/AuthContext';
 
 export function Login() {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { loginUser, authTokens, loginFailError } = useContext(AuthContext);
+  const [hasRedirected, setHasRedirected] = useState(false);
+  const { loginUser, authTokens, loginFailError, isLoading } = useContext(AuthContext);
 
   useEffect(() => {
     const previousTheme = document.documentElement.getAttribute('data-theme');
     document.documentElement.setAttribute('data-theme', 'light');
-    
-    if (authTokens) {
-      navigate('/');
+
+    if (authTokens && !isLoading && !hasRedirected) {
+      setHasRedirected(true);
+      navigate('/perfil', { replace: true });
     }
 
     return () => {
@@ -26,19 +26,16 @@ export function Login() {
         document.documentElement.setAttribute('data-theme', previousTheme);
       }
     };
-  }, [authTokens, navigate]);
+  }, [authTokens, isLoading, navigate, hasRedirected]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const success = await loginUser(username, password);
-    setIsLoading(false);
-
-    if (success) {
-      navigate('/perfil');
+    const result = await loginUser(username, password);
+    if (result.success) {
+      alert('Login realizado com sucesso!');
+      navigate('/perfil', { replace: true });
     }
-}
+  };
 
   return (
     <div className={styles.login}>

@@ -24,7 +24,7 @@ urlpatterns = [
     # Salas
     path('salas/', SalaListCreateAPIView.as_view(), name='salas-list-create'),
     path('salas/<int:pk>', SalaRetrieveUpdateDestroyView.as_view(), name='salas-list-create'),
-    path('salas/professores/', SalaPorProfessorListView.as_view(), name='salas-list-create'),
+    path('salas/professores/<int:ni>/', SalaPorProfessorListView.as_view(), name='salas-list-create'),
 
     # Usuários
     path('usuarios/', UsuarioListCreateView.as_view(), name='usuario-list-create'),
