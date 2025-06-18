@@ -39,7 +39,7 @@ urlpatterns = [
     # Reservas
     path('reservas/', ReservaListCreateView.as_view(), name='reserva-list-create'),
     path('reservas/<int:pk>/', ReservaRetrieveDestroyAPIView.as_view(), name='reserva-destroy'),
-    path('reservas/professores/', ReservaPorProfessorListView.as_view(), name='reserva-list-professor'),
+    path('reservas/professores/<int:ni>/', ReservaPorProfessorListView.as_view(), name='reserva-list-professor'),
     
     # JWT
     path('auth/', LoginView.as_view(), name='token_obtain_pair'),

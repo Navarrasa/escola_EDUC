@@ -169,6 +169,7 @@ export function Classroom() {
         if (errorData?.error?.includes('professor')) {
           setError('Este professor já está associado a outra sala.');
         } else {
+          console.log(error);
           setError(errorData?.detail || 'Este professor já está associado a outra sala.');
         }
         // console.error('Error response:', errorData);
@@ -310,7 +311,7 @@ export function Classroom() {
       {/* Lista de disciplinas */}
       <div>
         {classrooms.map((classroom) => (
-          <div key={classroom.id} className={styles.ClassroomCard}>
+          <div key={classroom.id} className={styles.classroomCard}>
             <h3>{classroom.nome}</h3>
             <p><strong>Curso:</strong> {classroom.curso}</p>
             <p><strong>Capacidade:</strong> {classroom.capacidade}</p>

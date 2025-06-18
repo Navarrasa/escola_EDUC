@@ -86,7 +86,7 @@ export function Header() {
                                     <div onClick={() => handleUserOptionClick('Reservas')}>Reservas</div>
                                     <div onClick={() => handleUserOptionClick('Disciplinas')}>Disciplinas</div>
                                     <div onClick={() => handleUserOptionClick('Sala de Aula')}>Sala de Aula</div>
-                                    {user?.tipo === 'G' && (
+                                    {user?.tipo === 'GESTOR' && (
                                         <div onClick={() => handleUserOptionClick('Cadastro Professor')}>Cadastro Professor</div>
                                     )}
                                     <div onClick={() => handleUserOptionClick('Sair')}>Sair</div>

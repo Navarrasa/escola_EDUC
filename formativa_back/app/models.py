@@ -54,7 +54,7 @@ class Usuario(AbstractUser):
 
 class Disciplina(models.Model):
     """Modelo para representar disciplinas acadêmicas."""
-    nome = models.CharField(max_length=100, help_text="Nome da disciplina.")
+    nome = models.CharField(max_length=100, help_text="Nome da disciplina.", unique=True)
     curso = models.CharField(max_length=100, help_text="Curso associado à disciplina.")
     descricao = models.TextField(blank=True, null=True, help_text="Descrição da disciplina.")
     carga_horaria = models.PositiveIntegerField(help_text="Carga horária em horas.")
@@ -67,6 +67,16 @@ class Disciplina(models.Model):
         limit_choices_to={'tipo': 'PROFESSOR'},
         help_text="Professor responsável pela disciplina."
     )
+
+    def save(self, *args, **kwargs):
+        """Garante que um professor não seja associado a mais de uma disciplina."""
+        if self.professor:
+            existing = Disciplina.objects.filter(professor=self.professor)
+            if self.pk:
+                existing = existing.exclude(pk=self.pk)
+            if existing.exists():
+                raise ValidationError("Um professor não pode ser responsável por mais de uma disciplina.")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.nome} ({self.curso})"
@@ -116,7 +126,7 @@ class Reserva(models.Model):
     data_inicio = models.DateTimeField(help_text="Data e hora de início da reserva.")
     data_termino = models.DateTimeField(help_text="Data e hora de término da reserva.")
     periodo = models.CharField(
-        max_length=5,  # Ajustado para corresponder a PERIODO_CHOICES
+        max_length=5,
         choices=PERIODO_CHOICES,
         help_text="Período da reserva (Manhã, Tarde, Noite)."
     )
@@ -126,14 +136,14 @@ class Reserva(models.Model):
         related_name='reservas',
         help_text="Sala reservada."
     )
-    professor_responsavel = models.ForeignKey(
+    professor = models.ForeignKey(
         Usuario,
         on_delete=models.CASCADE,
         related_name='reservas',
         limit_choices_to={'tipo': 'PROFESSOR'},
         help_text="Professor responsável pela reserva."
     )
-    disciplina_associada = models.ForeignKey(
+    disciplina = models.ForeignKey(
         Disciplina,
         on_delete=models.CASCADE,
         related_name='reservas',

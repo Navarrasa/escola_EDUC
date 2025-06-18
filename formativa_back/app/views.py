@@ -183,6 +183,7 @@ class ReservaPorProfessorListView(ListAPIView):
     """
     serializer_class = ReservaSerializer
     permission_classes = [IsProfessor]
+    lookup_field = 'ni'
 
     def get_queryset(self):
         """Retorna as reservas associadas ao professor logado."""

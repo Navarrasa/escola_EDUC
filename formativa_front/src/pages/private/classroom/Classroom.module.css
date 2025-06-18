@@ -7,7 +7,7 @@
   max-width: 900px;
   margin: 0 auto;
   background-color: var(--bg-color);
-  min-height: 100vh;
+  min-height: 50vh;
 }
 
 /* Título principal */
@@ -99,7 +99,7 @@ textarea.input {
 }
 
 /* Card de disciplina */
-.disciplineCard {
+.classroomCard {
   background-color: var(--card-bg-color);
   border-radius: 8px;
   padding: 1.5rem;
@@ -110,25 +110,25 @@ textarea.input {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.disciplineCard:hover {
+.classroomCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6); /* Um pouco mais escura que --shadow */
 }
 
-.disciplineCard h3 {
+.classroomCard h3 {
   font-size: 1.25rem;
   color: var(--text-color);
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
-.disciplineCard p {
+.classroomCard p {
   font-size: 1rem;
   color: var(--text-color);
   margin: 0.5rem 0;
 }
 
-.disciplineCard p strong {
+.classroomCard p strong {
   color: var(--text-color);
   font-weight: 500;
 }
@@ -189,7 +189,7 @@ textarea.input {
     padding: 1.5rem;
   }
 
-  .disciplineCard {
+  .classroomCard {
     padding: 1rem;
   }
 

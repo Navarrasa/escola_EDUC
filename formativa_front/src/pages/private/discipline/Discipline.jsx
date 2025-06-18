@@ -137,7 +137,8 @@ export function Discipline() {
       setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
       setError(null);
     } catch (error) {
-      setError(error.response?.data?.detail || 'Erro ao salvar disciplina.');
+      console.log(error);
+      setError(error.response?.data?.detail || 'Um professor não pode ser associado a mais de uma disciplina.');
     }
   };
 
