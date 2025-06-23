@@ -18,6 +18,8 @@ export function TeacherRegistration() {
   const [newUser, setNewUser] = useState({
     password: '', // Campo obrigatório para senha
     username: '', // Campo obrigatório para nome de usuário
+    first_name: '', // Campo primeiro nome do usuário
+    last_name: '', // Campo primeiro último nome do usuário
     tipo: 'PROFESSOR', // Valor padrão conforme o modelo
     ni: '', // Campo obrigatório para número de identificação
     email: '',
@@ -63,7 +65,7 @@ export function TeacherRegistration() {
     if (!isGestor) return;
 
     // Validações simples dos campos
-    if (!newUser.password || !newUser.username || !newUser.ni || !newUser.tipo) {
+    if (!newUser.password || !newUser.username || !newUser.ni || !newUser.tipo || !newUser.email) {
       setError('Preencha todos os campos obrigatórios.');
       return;
     }
@@ -93,6 +95,8 @@ export function TeacherRegistration() {
       setNewUser({
         password: '',
         username: '',
+        first_name: '',
+        last_name: '',
         tipo: 'PROFESSOR',
         ni: '',
         email: '',
@@ -118,6 +122,8 @@ export function TeacherRegistration() {
     setNewUser({
       password: user.password || '',
       username: user.username || '',
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
       tipo: user.tipo || 'PROFESSOR',
       ni: user.ni || '',
       email: user.email || '',
@@ -151,140 +157,146 @@ export function TeacherRegistration() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1>Gerenciar Usuários</h1>
+  <div className={styles.container}>
+    <h1>Gerenciar Usuários</h1>
 
-      {/* Exibe mensagens de erro */}
-      {error && <div className={styles.error}>{error}</div>}
+    {error && <div className={styles.error}>{error}</div>}
 
-      {/* Formulário para criação/edição de usuários */}
-      <form onSubmit={handleSubmit} className={`${styles.form} ${editingUser ? styles.editing : ''}`}>
-        <label>Senha</label>
-        <input
-          className={styles.input}
+    <div className={styles.form_container}>
+      <div className={styles.form_grid}>
+        <div>
+          <label className={styles.input_label}>Nome de Usuário*</label>
+          <input className={styles.input_field} 
+          type="text" 
+          value={newUser.username} 
+          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} 
+          required 
+          placeholder='Nome de Usuário'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>Senha*</label>
+          <input className={styles.input_field} 
           type="password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-          aria-label="Senha"
-          placeholder="Senha*"
+          value={newUser.password} 
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} 
+          required 
+          placeholder='Senha'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>Primeiro Nome*</label>
+          <input className={styles.input_field} 
+          type="text" 
+          value={newUser.first_name} 
+          onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })} 
+          required 
+          placeholder='Primeiro Nome'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>Último Nome*</label>
+          <input className={styles.input_field} 
+          type="text" 
+          value={newUser.last_name} 
+          onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })} 
+          required 
+          placeholder='Último Nome'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>Tipo de Usuário*</label>
+          <select className={styles.input_field} 
+          value={newUser.tipo} 
+          onChange={(e) => setNewUser({ ...newUser, tipo: e.target.value })} 
           required
-        />
-
-        <label>Nome de Usuário</label>
-        <input
-          className={styles.input}
-          type="text"
-          value={newUser.username}
-          onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-          aria-label="Nome de Usuário"
-          placeholder="Nome de usuário*"
-          required
-        />
-
-        <label>Tipo de Usuário</label>
-        <select
-          className={styles.input}
-          value={newUser.tipo}
-          onChange={(e) => setNewUser({ ...newUser, tipo: e.target.value })}
-          aria-label="Tipo de Usuário"
-          required
-        >
-          <option value="PROFESSOR">Professor</option>
-          <option value="GESTOR">Gestor</option>
-        </select>
-
-        <label>Número de Identificação (NI)</label>
-        <input
-          className={styles.input}
-          type="number"
-          value={newUser.ni}
-          onChange={(e) => setNewUser({ ...newUser, ni: e.target.value })}
-          aria-label="Número de Identificação"
-          placeholder="NI único*"
-          required
-        />
-
-        <label>E-mail</label>
-        <input
-          className={styles.input}
-          type="email"
-          value={newUser.email}
-          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-          aria-label="E-mail"
-          placeholder="Opcional"
-        />
-
-        <label>Telefone</label>
-        <input
-          className={styles.input}
-          type="tel"
-          value={newUser.telefone}
-          onChange={(e) => setNewUser({ ...newUser, telefone: e.target.value })}
-          aria-label="Telefone"
-          placeholder="Ex.: +5511999999999 (Opcional)"
-        />
-
-        <label>Data de Nascimento</label>
-        <input
-          className={styles.input}
-          type="date"
-          value={newUser.data_nascimento}
-          onChange={(e) => setNewUser({ ...newUser, data_nascimento: e.target.value })}
-          aria-label="Data de Nascimento"
-        />
-
-        <label>Data de Contratação</label>
-        <input
-          className={styles.input}
-          type="date"
-          value={newUser.data_contratacao}
-          onChange={(e) => setNewUser({ ...newUser, data_contratacao: e.target.value })}
-          aria-label="Data de Contratação"
-        />
-
-        <button type="submit" className={styles.button}>
-          {editingUser ? 'Salvar Alterações' : 'Adicionar Usuário'}
-        </button>
-        {editingUser && (
-          <button
-            type="button"
-            className={`${styles.button} ${styles.cancel}`} // Adicionado estilo cancel
-            onClick={() => {
-              setEditingUser(null);
-              setNewUser({
-                password: '',
-                username: '',
-                tipo: 'PROFESSOR',
-                ni: '',
-                email: '',
-                telefone: '',
-                data_nascimento: '',
-                data_contratacao: '',
-              });
-            }}
           >
-            Cancelar
-          </button>
-        )}
-      </form>
+            <option value="PROFESSOR">Professor</option>
+            <option value="GESTOR">Gestor</option>
+          </select>
+        </div>
+        <div>
+          <label className={styles.input_label}>Número de Identificação (NI)*</label>
+          <input className={styles.input_field} 
+          type="number" 
+          value={newUser.ni} 
+          onChange={(e) => setNewUser({ ...newUser, ni: e.target.value })} 
+          required 
+          placeholder='Número de Identificação (NI)'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>E-mail*</label>
+          <input className={styles.input_field} 
+          type="email" 
+          value={newUser.email} 
+          onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+          placeholder='E-mail Profissional'
+          />
+        </div>
+        <div>
+          <label className={styles.input_label}>Telefone</label>
+          <input className={styles.input_field} 
+          type="tel" 
+          value={newUser.telefone} 
+          onChange={(e) => setNewUser({ ...newUser, telefone: e.target.value })} 
+          placeholder="Ex.: +5511999999999" />
+        </div>
+        <div>
+          <label className={styles.input_label}>Data de Nascimento*</label>
+          <input className={styles.input_field} 
+          type="date" 
+          value={newUser.data_nascimento} 
+          onChange={(e) => setNewUser({ ...newUser, data_nascimento: e.target.value })} 
+          />
+        </div>
 
-      {/* Lista de usuários cadastrados */}
-      <div>
-        {users.map((user) => (
-          <div key={user.id} className={styles.reservationCard}>
-            <h3>Usuário #{user.ni}</h3>
-            <p><strong>Nome:</strong> {user.username}</p>
-            <p><strong>Tipo:</strong> {user.tipo}</p>
-            {isGestor && (
-              <div className={styles.actionButtons}>
-                <button onClick={() => startEditing(user)}>Editar</button>
-                <button onClick={() => handleDeleteReservation(user.id)}>Excluir</button>
-              </div>
-            )}
-          </div>
-        ))}
+        <div>
+          <label className={styles.input_label}>Data de Contratação*</label>
+          <input className={styles.input_field} 
+          type="date" 
+          value={newUser.data_contratacao} 
+          onChange={(e) => setNewUser({ ...newUser, data_contratacao: e.target.value })} 
+          />
+        </div>
       </div>
+
+  <div className={styles.btn_container}>
+    <button type="submit" className={styles.submit_btn}>{editingUser ? 'Salvar Alterações' : 'Adicionar Usuário'}</button>
+    {editingUser && (
+    <button type="button" className={styles.cancel_btn} onClick={() => {
+      setEditingUser(null);
+      setNewUser({
+        username: '', 
+        password: '', 
+        first_name: '', 
+        last_name: '', 
+        tipo: 'PROFESSOR',
+        ni: '', 
+        email: '', 
+        telefone: '', 
+        data_nascimento: '', 
+        data_contratacao: ''
+      });
+      }}>Cancelar</button>
+      )}
     </div>
+  </div>
+
+  <div className={styles.userCard}>
+  {users.map((user) => (
+    <div key={user.id} className={styles.card}>
+      <h3>Usuário #{user.ni}</h3>
+      <p><strong>Nome:</strong> {user.username}</p>
+      <p><strong>Tipo:</strong> {user.tipo}</p>
+    <div className={styles.btn_container}>
+      <button onClick={() => startEditing(user)} className={styles.action_btn}>Editar</button>
+      <button onClick={() => handleDeleteReservation(user.id)} className={styles.action_btn}>Excluir</button>
+    </div>
+    </div>
+    ))}
+    </div>
+  </div>
   );
 }
 

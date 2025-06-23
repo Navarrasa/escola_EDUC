@@ -321,7 +321,7 @@ export function Reservation() {
       {/* Formulário (apenas para gestores) */}
       {isGestor && (
         <form onSubmit={handleSubmit} className={`${styles.form} ${editingReservation ? styles.editing : ''}`}>
-          <label>Data Início</label>
+          <label classname={styles.input_label}>Data Início</label>
           <input
             className={styles.input}
             type="date"
@@ -329,7 +329,7 @@ export function Reservation() {
             onChange={(e) => setNewReserva({ ...newReserva, data_inicio: e.target.value })}
             aria-label="Data Início da Reserva"
           />
-          <label>Data Término</label>
+          <label classname={styles.input_label}>Data Término</label>
           <input
             className={styles.input}
             type="date"
@@ -337,7 +337,7 @@ export function Reservation() {
             onChange={(e) => setNewReserva({ ...newReserva, data_termino: e.target.value })}
             aria-label="Data Término da Reserva"
           />
-          <label>Professor</label>
+          <label classname={styles.input_label}>Professor</label>
           <select
             className={styles.input}
             value={newReserva.professor}
@@ -351,7 +351,7 @@ export function Reservation() {
               </option>
             ))}
           </select>
-          <label>Disciplina</label>
+          <label classname={styles.input_label}>Disciplina</label>
           <select
             className={styles.input}
             value={newReserva.disciplina}
@@ -365,7 +365,7 @@ export function Reservation() {
               </option>
             ))}
           </select>
-          <label>Sala Reservada</label>
+          <label classname={styles.input_label}>Sala Reservada</label>
           <select
             className={styles.input}
             value={newReserva.sala_reservada}
@@ -379,7 +379,7 @@ export function Reservation() {
               </option>
             ))}
           </select>
-          <label>Período da Reserva</label>
+          <label classname={styles.input_label}>Período da Reserva</label>
           <select
             className={styles.input}
             value={newReserva.periodo}
