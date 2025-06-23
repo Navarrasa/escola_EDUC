@@ -198,6 +198,7 @@ export function Discipline() {
       {/* Formulário (apenas para gestores) */}
       {isGestor && (
         <form onSubmit={handleSubmit} className={styles.form}>
+          <label>Nome da Disciplina</label>
           <input
             className={styles.input}
             type="text"
@@ -206,6 +207,7 @@ export function Discipline() {
             onChange={(e) => setNewDiscipline({ ...newDiscipline, nome: e.target.value })}
             aria-label="Nome da disciplina"
           />
+          <label>Curso</label>
           <input
             className={styles.input}
             type="text"
@@ -214,6 +216,7 @@ export function Discipline() {
             onChange={(e) => setNewDiscipline({ ...newDiscipline, curso: e.target.value })}
             aria-label="Curso"
           />
+          <label>Carga Horária</label>
           <input
             className={styles.input}
             type="number"
@@ -222,6 +225,7 @@ export function Discipline() {
             onChange={(e) => setNewDiscipline({ ...newDiscipline, carga_horaria: e.target.value })}
             aria-label="Carga horária"
           />
+          <label>Professor</label>
           <select
             className={styles.input}
             value={newDiscipline.professor}
@@ -235,6 +239,7 @@ export function Discipline() {
               </option>
             ))}
           </select>
+          <label>Descrição</label>
           <textarea
             className={styles.input}
             placeholder="Descrição"

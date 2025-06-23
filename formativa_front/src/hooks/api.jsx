@@ -1,0 +1,1 @@
+// Arquivo que buscará todos os dados da API e os disponibilizará através de um contexto React.

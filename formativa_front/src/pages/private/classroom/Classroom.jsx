@@ -233,6 +233,7 @@ export function Classroom() {
       {/* Formulário (apenas para gestores) */}
       {isGestor && (
         <form onSubmit={handleSubmit} className={styles.form}>
+          <label>Nome da Sala</label>
           <input
             className={styles.input}
             type="text"
@@ -241,6 +242,7 @@ export function Classroom() {
             onChange={(e) => setNewClassroom({ ...newClassroom, nome: e.target.value })}
             aria-label="Nome da Sala"
           />
+          <label>Curso</label>
           <input
             className={styles.input}
             type="text"
@@ -249,6 +251,7 @@ export function Classroom() {
             onChange={(e) => setNewClassroom({ ...newClassroom, curso: e.target.value })}
             aria-label="Curso"
           />
+          <label>Capacidade</label>
           <input
             className={styles.input}
             type="number"
@@ -257,6 +260,7 @@ export function Classroom() {
             onChange={(e) => setNewClassroom({ ...newClassroom, capacidade: e.target.value })}
             aria-label="Quantidade de Alunos"
           />
+          <label>Período</label>
           <select
             className={styles.input}
             value={newClassroom.periodo}
@@ -270,6 +274,7 @@ export function Classroom() {
               </option>
             ))}
           </select>
+          <label>Professor</label>
           <select
             className={styles.input}
             value={newClassroom.professor}
@@ -283,6 +288,7 @@ export function Classroom() {
               </option>
             ))}
           </select>
+          <label>Descrição</label>
           <textarea
             className={styles.input}
             placeholder="Descrição da Aula"
