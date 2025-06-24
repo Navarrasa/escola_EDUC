@@ -7,7 +7,7 @@ export function Profile() {
 
   return (
     <div className={styles.profileContainer}>
-      <h1 className={styles.title}>Perfil do Professor</h1>
+      <h1>Perfil do Professor</h1>
       {user ? (
         <div className={styles.userInfo}>
           <p className={styles.infoItem}>

@@ -1,91 +1,41 @@
 /* Container principal */
 .profileContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  margin: 0 auto;
+  padding: 2rem;
   background-color: var(--bg-color);
-  color: var(--text-color);
-  padding: 20px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-/* Título */
-.title {
-  font-size: 2.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--text-color);
+  & h1{
+    color: var(--text-color);
+  }
 }
 
 /* Container de informações do usuário */
 .userInfo {
-  background-color: var(--card-bg-color);
-  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  background-color: var(--bg-color);
   padding: 2rem;
-  width: 100%;
-  max-width: 500px;
+  border-radius: 12px;
   box-shadow: var(--shadow);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 2rem;
+  width: 800px;
 }
 
 /* Item de informação */
 .infoItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border-color);
+  display: block;
   font-size: 1rem;
+  font-weight: 600;
   color: var(--text-color);
-}
-
-.infoItem:last-child {
-  border-bottom: none;
+  margin-bottom: 0.5rem;
 }
 
 /* Rótulo (label) */
 .label {
-  font-weight: 500;
-  color: var(--primary-color);
-}
-
-/* Mensagem de usuário não logado */
-.noUser {
-  font-size: 1.2rem;
-  color: var(--text-color);
-  text-align: center;
-  padding: 2rem;
-  background-color: var(--card-bg-color);
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-}
-
-/* Botão de logout */
-.logoutButton {
-  display: block;
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1.5rem;
-  background-color: var(--primary-color);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.logoutButton:hover {
-  background-color: var(--button-hover);
-  transform: translateY(-2px);
-}
-
-.logoutButton:active {
-  transform: translateY(0);
+  color: var(--primary-color);
 }
 
 /* Responsividade */
@@ -105,6 +55,6 @@
   }
 
   .label {
-    font-size: 0.9rem;
+    font-size: .9rem;
   }
 }

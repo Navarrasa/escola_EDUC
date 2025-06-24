@@ -197,78 +197,83 @@ export function Discipline() {
 
       {/* Formulário (apenas para gestores) */}
       {isGestor && (
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <label>Nome da Disciplina</label>
+        <form onSubmit={handleSubmit} className={styles.form_container}>
+          <div className={styles.form_grid}>
+          <label className={styles.input_label}>Nome da Disciplina*</label>
           <input
-            className={styles.input}
+            className={styles.input_field}
             type="text"
-            placeholder="Nome da Disciplina*"
+            placeholder="Nome da Disciplina"
             value={newDiscipline.nome}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, nome: e.target.value })}
             aria-label="Nome da disciplina"
           />
-          <label>Curso</label>
+          <label className={styles.input_label}>Curso*</label>
           <input
-            className={styles.input}
+            className={styles.input_field}
             type="text"
-            placeholder="Curso*"
+            placeholder="Curso"
             value={newDiscipline.curso}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, curso: e.target.value })}
             aria-label="Curso"
           />
-          <label>Carga Horária</label>
+          <label className={styles.input_label}>Carga Horária*</label>
           <input
-            className={styles.input}
+            className={styles.input_field}
             type="number"
-            placeholder="Carga Horária*"
+            placeholder="Carga Horária"
             value={newDiscipline.carga_horaria}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, carga_horaria: e.target.value })}
             aria-label="Carga horária"
           />
-          <label>Professor</label>
+          <label className={styles.input_label}>Professor*</label>
           <select
-            className={styles.input}
+            className={styles.input_field}
             value={newDiscipline.professor}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, professor: e.target.value })}
             aria-label="Professor"
           >
-            <option value="">Selecione um professor*</option>
-            {professores.map((professor) => (
-              <option key={professor.id} value={professor.id}>
-                {professor.username}
-              </option>
-            ))}
+          <option value="">Selecione um professor*</option>
+          {professores.map((professor) => (
+          <option key={professor.id} value={professor.id}>
+          {professor.username}
+          </option>
+          ))}
           </select>
-          <label>Descrição</label>
+          <label className={styles.input_label}>Descrição</label>
           <textarea
-            className={styles.input}
+            className={styles.input_field}
             placeholder="Descrição"
             value={newDiscipline.descricao}
             onChange={(e) => setNewDiscipline({ ...newDiscipline, descricao: e.target.value })}
             aria-label="Descrição"
           />
-          <button type="submit" className={styles.button}>
-            {editingDiscipline ? 'Salvar Alterações' : 'Adicionar Disciplina'}
+          </div>
+        <div className={styles.btn_container}>
+          
+          <button type="submit" className={styles.submit_btn}>
+          {editingDiscipline ? 'Salvar Alterações' : 'Adicionar Disciplina'}
           </button>
           {editingDiscipline && (
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => {
-                setEditingDiscipline(null);
-                setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
-              }}
-            >
-              Cancelar
-            </button>
+          <button
+            type="button"
+            className={styles.cancel_btn}
+            onClick={() => {
+            setEditingDiscipline(null);
+            setNewDiscipline({ nome: '', curso: '', descricao: '', carga_horaria: '', professor: '' });
+          }}
+          >
+          Cancelar
+          </button>
           )}
+        </div>
         </form>
       )}
 
       {/* Lista de disciplinas */}
-      <div>
+      <div className={styles.userCard}>
         {disciplinas.map((disciplina) => (
-          <div key={disciplina.id} className={styles.disciplineCard}>
+          <div key={disciplina.id} className={styles.card}>
             <h3>{disciplina.nome}</h3>
             <p><strong>Curso:</strong> {disciplina.curso}</p>
             <p><strong>Carga Horária:</strong> {disciplina.carga_horaria}</p>
@@ -277,9 +282,9 @@ export function Discipline() {
               <p><strong>Professor:</strong> {getProfessorName(disciplina.professor)}</p>
             )}
             {isGestor && (
-              <div className={styles.actionButtons}>
-                <button onClick={() => startEditing(disciplina)}>Editar</button>
-                <button onClick={() => handleDeleteDiscipline(disciplina.id)}>Excluir</button>
+              <div className={styles.btn_container}>
+                <button onClick={() => startEditing(disciplina)} className={styles.action_btn}>Editar</button>
+                <button onClick={() => handleDeleteDiscipline(disciplina.id)} className={styles.action_btn}>Excluir</button>
               </div>
             )}
           </div>

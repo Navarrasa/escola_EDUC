@@ -322,7 +322,7 @@ export function Reservation() {
       {isGestor && (
         <form onSubmit={handleSubmit} className={styles.form_container}>
 
-          <div className="form_grid">
+          <div className={styles.form_grid}>
             <div>
               <label className={styles.input_label}>Data Início</label>
               <input
@@ -410,7 +410,7 @@ export function Reservation() {
             </div>
           </div>
 
-          <div className="btn_container">  
+          <div className={styles.btn_container}>  
             <button type="submit" className={styles.submit_btn}>
               {editingReservation ? 'Salvar Alterações' : 'Adicionar Reserva'}
             </button>
