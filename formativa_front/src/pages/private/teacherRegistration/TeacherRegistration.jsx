@@ -161,8 +161,7 @@ export function TeacherRegistration() {
     <h1>Gerenciar Usuários</h1>
 
     {error && <div className={styles.error}>{error}</div>}
-
-    <div className={styles.form_container}>
+    <form onSubmit={handleSubmit} className={styles.form_container}>
       <div className={styles.form_grid}>
         <div>
           <label className={styles.input_label}>Nome de Usuário*</label>
@@ -281,7 +280,7 @@ export function TeacherRegistration() {
       }}>Cancelar</button>
       )}
     </div>
-  </div>
+  </form>
 
   <div className={styles.userCard}>
   {users.map((user) => (

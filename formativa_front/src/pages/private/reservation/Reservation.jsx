@@ -320,108 +320,127 @@ export function Reservation() {
 
       {/* Formulário (apenas para gestores) */}
       {isGestor && (
-        <form onSubmit={handleSubmit} className={`${styles.form} ${editingReservation ? styles.editing : ''}`}>
-          <label classname={styles.input_label}>Data Início</label>
-          <input
-            className={styles.input}
-            type="date"
-            value={newReserva.data_inicio}
-            onChange={(e) => setNewReserva({ ...newReserva, data_inicio: e.target.value })}
-            aria-label="Data Início da Reserva"
-          />
-          <label classname={styles.input_label}>Data Término</label>
-          <input
-            className={styles.input}
-            type="date"
-            value={newReserva.data_termino}
-            onChange={(e) => setNewReserva({ ...newReserva, data_termino: e.target.value })}
-            aria-label="Data Término da Reserva"
-          />
-          <label classname={styles.input_label}>Professor</label>
-          <select
-            className={styles.input}
-            value={newReserva.professor}
-            onChange={(e) => setNewReserva({ ...newReserva, professor: e.target.value })}
-            aria-label="Professor"
-          >
-            <option value="">Selecione um professor*</option>
-            {professores.map((professor) => (
-              <option key={professor.id} value={professor.id}>
-                {professor.username}
-              </option>
-            ))}
-          </select>
-          <label classname={styles.input_label}>Disciplina</label>
-          <select
-            className={styles.input}
-            value={newReserva.disciplina}
-            onChange={(e) => setNewReserva({ ...newReserva, disciplina: e.target.value })}
-            aria-label="Disciplina"
-          >
-            <option value="">Selecione uma disciplina*</option>
-            {disciplinas.map((disciplina) => (
-              <option key={disciplina.id} value={disciplina.id}>
-                {disciplina.nome}
-              </option>
-            ))}
-          </select>
-          <label classname={styles.input_label}>Sala Reservada</label>
-          <select
-            className={styles.input}
-            value={newReserva.sala_reservada}
-            onChange={(e) => setNewReserva({ ...newReserva, sala_reservada: e.target.value })}
-            aria-label="Sala Reservada"
-          >
-            <option value="">Selecione uma Sala*</option>
-            {salas.map((sala) => (
-              <option key={sala.id} value={sala.id}>
-                {sala.nome}
-              </option>
-            ))}
-          </select>
-          <label classname={styles.input_label}>Período da Reserva</label>
-          <select
-            className={styles.input}
-            value={newReserva.periodo}
-            onChange={(e) => setNewReserva({ ...newReserva, periodo: e.target.value })}
-            aria-label="Período"
-          >
-            <option value="">Selecione um período*</option>
-            {periodos.map((periodo) => (
-              <option key={periodo.value} value={periodo.value}>
-                {periodo.label}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className={styles.button}>
-            {editingReservation ? 'Salvar Alterações' : 'Adicionar Reserva'}
-          </button>
-          {editingReservation && (
-            <button
-              type="button"
-              className={styles.button}
-              onClick={() => {
-                setEditingReservation(null);
-                setNewReserva({
-                  data_inicio: '',
-                  data_termino: '',
-                  periodo: '',
-                  sala_reservada: '',
-                  professor: '',
-                  disciplina: '',
-                });
-              }}
-            >
-              Cancelar
+        <form onSubmit={handleSubmit} className={styles.form_container}>
+
+          <div className="form_grid">
+            <div>
+              <label className={styles.input_label}>Data Início</label>
+              <input
+                className={styles.input_field}
+                type="date"
+                value={newReserva.data_inicio}
+                onChange={(e) => setNewReserva({ ...newReserva, data_inicio: e.target.value })}
+                aria-label="Data Início da Reserva"
+              />
+            </div>
+            <div>
+              <label className={styles.input_label}>Data Término</label>
+              <input
+                className={styles.input_field}
+                type="date"
+                value={newReserva.data_termino}
+                onChange={(e) => setNewReserva({ ...newReserva, data_termino: e.target.value })}
+                aria-label="Data Término da Reserva"
+              />
+            </div>
+            <div>
+              <label className={styles.input_label}>Professor</label>
+              <select
+                className={styles.input_field}
+                value={newReserva.professor}
+                onChange={(e) => setNewReserva({ ...newReserva, professor: e.target.value })}
+                aria-label="Professor"
+              >
+                <option value="">Selecione um professor*</option>
+                {professores.map((professor) => (
+                  <option key={professor.id} value={professor.id}>
+                    {professor.username}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={styles.input_label}>Disciplina</label>
+              <select
+                className={styles.input_field}
+                value={newReserva.disciplina}
+                onChange={(e) => setNewReserva({ ...newReserva, disciplina: e.target.value })}
+                aria-label="Disciplina"
+              >
+                <option value="">Selecione uma disciplina*</option>
+                {disciplinas.map((disciplina) => (
+                  <option key={disciplina.id} value={disciplina.id}>
+                    {disciplina.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={styles.input_label}>Sala Reservada</label>
+              <select
+                className={styles.input_field}
+                value={newReserva.sala_reservada}
+                onChange={(e) => setNewReserva({ ...newReserva, sala_reservada: e.target.value })}
+                aria-label="Sala Reservada"
+              >
+                <option value="">Selecione uma Sala*</option>
+                {salas.map((sala) => (
+                  <option key={sala.id} value={sala.id}>
+                    {sala.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              
+              <label className={styles.input_label}>Período da Reserva</label>
+              <select
+                className={styles.input_field}
+                value={newReserva.periodo}
+                onChange={(e) => setNewReserva({ ...newReserva, periodo: e.target.value })}
+                aria-label="Período"
+              >
+                <option value="">Selecione um período*</option>
+                {periodos.map((periodo) => (
+                  <option key={periodo.value} value={periodo.value}>
+                    {periodo.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="btn_container">  
+            <button type="submit" className={styles.submit_btn}>
+              {editingReservation ? 'Salvar Alterações' : 'Adicionar Reserva'}
             </button>
-          )}
+            {editingReservation && (
+              <button
+                type="button"
+                className={styles.cancel_btn}
+                onClick={() => {
+                  setEditingReservation(null);
+                  setNewReserva({
+                    data_inicio: '',
+                    data_termino: '',
+                    periodo: '',
+                    sala_reservada: '',
+                    professor: '',
+                    disciplina: '',
+                  });
+                }}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
         </form>
-      )}
+        )}
 
       {/* Lista de reservas */}
-      <div>
+      <div className={styles.userCard}>
         {reservas.map((reserva) => (
-          <div key={reserva.id} className={styles.reservationCard}>
+          <div key={reserva.id} className={styles.card}>
             <h3>Reserva #{reserva.id}</h3>
             <p><strong>Data de Início:</strong> {reserva.data_inicio}</p>
             <p><strong>Data de Término:</strong> {reserva.data_termino}</p>
@@ -430,9 +449,9 @@ export function Reservation() {
             <p><strong>Disciplina:</strong> {getDisciplinaName(reserva.disciplina)}</p>
             {isGestor && <p><strong>Professor:</strong> {getProfessorName(reserva.professor)}</p>}
             {isGestor && (
-              <div className={styles.actionButtons}>
-                <button onClick={() => startEditing(reserva)}>Editar</button>
-                <button onClick={() => handleDeleteReservation(reserva.id)}>Excluir</button>
+              <div className={styles.btn_container}>
+                <button onClick={() => startEditing(reserva)} className={styles.action_btn}>Editar</button>
+                <button onClick={() => handleDeleteReservation(reserva.id)} className={styles.action_btn}>Excluir</button>
               </div>
             )}
           </div>
